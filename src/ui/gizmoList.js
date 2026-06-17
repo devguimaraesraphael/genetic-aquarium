@@ -69,7 +69,7 @@ export const gizmoList = (() => {
     gizmos.forEach((gizmo) => {
       const item = document.createElement("div");
       item.className = "gizmo-item";
-      const type = gizmo.identity[1] === 1 ? "🌿" : "🔴";
+      const type = gizmo.identity === "herbivore" ? "🌿" : "🔴";
       item.textContent = `${type} #${gizmo.id}`;
       item.dataset.gizmoId = gizmo.id;
 

@@ -1,12 +1,9 @@
 /**
- * sceneSetup.js – creates the Three.js renderer, scene, camera, lights, and bloom composer.
- * Extracted from main.js to keep file sizes small.
+ * sceneSetup.js – creates the Three.js renderer, scene, and camera.
+ * No bloom, no lights – all materials are MeshBasicMaterial (unlit).
  */
 
 import * as THREE from "three";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
 export function createRenderer() {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -19,7 +16,6 @@ export function createRenderer() {
 export function createScene() {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x04101e);
-  // No lights: all meshes use MeshBasicMaterial (unlit)
   return scene;
 }
 
@@ -34,17 +30,15 @@ export function createCamera() {
   );
 }
 
+/**
+ * Returns a thin wrapper so callers can use composer.render() unchanged.
+ * No post-processing – just renders the scene directly.
+ */
 export function createComposer(renderer, scene, camera) {
-  const composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  const bloomPass = new UnrealBloomPass(
-    new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.55,
-    0.4,
-    0.38,
-  );
-  composer.addPass(bloomPass);
-  return composer;
+  return {
+    render: () => renderer.render(scene, camera),
+    setSize: (w, h) => renderer.setSize(w, h),
+  };
 }
 
 export function bindResizeHandler(renderer, camera, composer) {
@@ -55,6 +49,5 @@ export function bindResizeHandler(renderer, camera, composer) {
     camera.top = window.innerHeight / 2;
     camera.bottom = -window.innerHeight / 2;
     camera.updateProjectionMatrix();
-    composer.setSize(window.innerWidth, window.innerHeight);
   });
 }

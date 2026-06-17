@@ -36,7 +36,10 @@ export function setupGui(gui, config, deps) {
 
   // ── Start Simulation button (top-level, always visible) ──────────────────
   if (startSimulation) {
-    gui.add({ "▶ Start Simulation": () => startSimulation() }, "▶ Start Simulation");
+    gui.add(
+      { "▶ Start Simulation": () => startSimulation() },
+      "▶ Start Simulation",
+    );
   }
 
   // Population

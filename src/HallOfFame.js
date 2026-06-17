@@ -86,7 +86,7 @@ export class HallOfFame {
    * @returns {boolean} true if this gizmo entered the top-3
    */
   register(gizmo) {
-    const isHerb = gizmo.identity[1] === 1;
+    const isHerb = gizmo.identity === "herbivore";
     const list = isHerb ? this.herbivores : this.carnivores;
     const snap = _snapshot(gizmo);
 

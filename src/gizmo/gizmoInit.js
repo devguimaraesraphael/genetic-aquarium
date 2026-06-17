@@ -9,7 +9,14 @@ import { NeuralNetwork } from "../NeuralNetwork.js";
 const IDENTITY_HERBIVORE = "herbivore";
 const IDENTITY_CARNIVORE = "carnivore";
 
+// Auto-incrementing ID so every gizmo gets a stable, unique number
+let _nextId = 1;
+export function resetGizmoIdCounter() {
+  _nextId = 1;
+}
+
 export function initGizmoState(gizmo, scene, config, options) {
+  gizmo.id = _nextId++;
   gizmo._scene = scene;
   gizmo._config = config;
 

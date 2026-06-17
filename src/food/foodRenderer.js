@@ -55,4 +55,3 @@ export function renderFoodInstances(meshes, foods, _dt) {
 // Keep FOOD_PALETTE export for backward compat (unused now)
 export const FOOD_PALETTE = [FOOD_COLOR];
 export const FOOD_GEOS = [_squareGeo];
-

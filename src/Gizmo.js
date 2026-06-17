@@ -1,10 +1,20 @@
 import * as THREE from "three";
 import { IDENTITY } from "./Identity.js";
-import { buildBodyMesh, buildSpikeMesh, buildVisionMesh, buildSeenTargetMarker } from "./gizmo/mesh.js";
+import {
+  buildBodyMesh,
+  buildSpikeMesh,
+  buildVisionMesh,
+  buildSeenTargetMarker,
+} from "./gizmo/mesh.js";
 import { buildInputs } from "./gizmo/inputs.js";
 import { mutateColor, crossoverColor } from "./gizmo/colors.js";
 import { inferNN } from "./gizmo/nnInference.js";
-import { applyPhysics, advancePosition, tryEat, updateSeenTargetMarker } from "./gizmo/movement.js";
+import {
+  applyPhysics,
+  advancePosition,
+  tryEat,
+  updateSeenTargetMarker,
+} from "./gizmo/movement.js";
 import { reproduce as _reproduceGizmo } from "./gizmo/lifecycle.js";
 import { initGizmoState } from "./gizmo/gizmoInit.js";
 import { selectGizmo, deselectGizmo } from "./gizmo/selection.js";
@@ -47,12 +57,18 @@ export class Gizmo {
     this.group.add(this.visionMesh);
   }
 
-  _buildSeenTargetMarker() { return buildSeenTargetMarker(); }
+  _buildSeenTargetMarker() {
+    return buildSeenTargetMarker();
+  }
 
   // ── NN helpers ─────────────────────────────────────────────────────────────
 
-  _nullInputs() { return new Array(12).fill(0); }
-  _buildInputs(config, allGizmos, foodManager) { return buildInputs(this, config, allGizmos, foodManager); }
+  _nullInputs() {
+    return new Array(12).fill(0);
+  }
+  _buildInputs(config, allGizmos, foodManager) {
+    return buildInputs(this, config, allGizmos, foodManager);
+  }
 
   _inferNN(inputs, config) {
     const r = inferNN(this.nn, inputs, this.id, config);
@@ -94,14 +110,24 @@ export class Gizmo {
 
   // ── Reproduction ────────────────────────────────────────────────────────────
 
-  reproduce(config) { return _reproduceGizmo(this, config); }
-  static mutateColor(color, delta = 0.05) { return mutateColor(color, delta); }
-  static crossoverColor(a, b) { return crossoverColor(a, b); }
+  reproduce(config) {
+    return _reproduceGizmo(this, config);
+  }
+  static mutateColor(color, delta = 0.05) {
+    return mutateColor(color, delta);
+  }
+  static crossoverColor(a, b) {
+    return crossoverColor(a, b);
+  }
 
   // ── Selection ───────────────────────────────────────────────────────────────
 
-  select() { selectGizmo(this); }
-  deselect() { deselectGizmo(this); }
+  select() {
+    selectGizmo(this);
+  }
+  deselect() {
+    deselectGizmo(this);
+  }
   _showSelectionMarker() {}
   _hideSelectionMarker() {}
 
@@ -110,11 +136,13 @@ export class Gizmo {
   getDetails() {
     const starvLimit = this._config?.gizmoStarvation ?? 120;
     return {
-      id: Math.random().toString(36).substring(7),
+      id: this.id,
       type: this.identity === IDENTITY_HERBIVORE ? "herbivore" : "carnivore",
       colorHex: "#" + this.color.getHexString(),
       size: this.genes.size.toFixed(2),
-      vision: Math.round(this.genes.visionRange?.[1] ?? this.genes.visionRange?.[0] ?? 0),
+      vision: Math.round(
+        this.genes.visionRange?.[1] ?? this.genes.visionRange?.[0] ?? 0,
+      ),
       score: this.score.toFixed(0),
       age: this.age.toFixed(1),
       timeSinceEat: this.starvationCounter.toFixed(1),
@@ -126,6 +154,11 @@ export class Gizmo {
     };
   }
 
-  destroy() { if (this.group.parent) this.group.parent.remove(this.group); this.isDead = true; }
-  dispose() { this.destroy(); }
+  destroy() {
+    if (this.group.parent) this.group.parent.remove(this.group);
+    this.isDead = true;
+  }
+  dispose() {
+    this.destroy();
+  }
 }

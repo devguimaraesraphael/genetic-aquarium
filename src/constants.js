@@ -34,13 +34,13 @@ export const CONFIG = {
   ],
 
   // ── Food ──────────────────────────────────────────────────────────────────
-  foodInitial: 10, // seeds at start
-  foodMaxCount: 2000, // hard cap
-  foodMinSize: 3, // px at birth
-  foodSpawnSize: 16, // px – max size / spawn trigger
-  foodGrowthRate: 4, // px / second
-  foodSpawnRadius: 50, // max px radius for child placement
-  foodSpawnCooldown: 5, // seconds a food waits at max size before spawning again
+  foodInitial: 40, // seeds at start
+  foodMaxCount: 400, // hard cap (was 2000 – too many)
+  foodMinSize: 2, // px at birth
+  foodSpawnSize: 5, // px – max size / spawn trigger (small squares)
+  foodGrowthRate: 1.5, // px / second
+  foodSpawnRadius: 40, // max px radius for child placement
+  foodSpawnCooldown: 8, // seconds a food waits at max size before spawning again
   // ── Population ────────────────────────────────────────────────────────────
   gizmoCount: 20, // number of gizmos created on start/restart
   carnivoreRatio: 0.1, // fraction of initial gizmos that are carnivores

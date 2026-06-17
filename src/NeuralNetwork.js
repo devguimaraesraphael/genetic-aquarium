@@ -64,16 +64,20 @@ export class NeuralNetwork {
     // Guard: validate that weight matrices exist and have the expected shape.
     // A mismatch (e.g. after crossover with wrong hiddenSize) must not crash.
     if (
-      !Array.isArray(this.w1) || this.w1.length !== this.hiddenSize ||
-      !Array.isArray(this.w1[0]) || this.w1[0].length !== this.inputSize ||
-      !Array.isArray(this.w2) || this.w2.length !== this.outputSize ||
-      !Array.isArray(this.w2[0]) || this.w2[0].length !== this.hiddenSize
+      !Array.isArray(this.w1) ||
+      this.w1.length !== this.hiddenSize ||
+      !Array.isArray(this.w1[0]) ||
+      this.w1[0].length !== this.inputSize ||
+      !Array.isArray(this.w2) ||
+      this.w2.length !== this.outputSize ||
+      !Array.isArray(this.w2[0]) ||
+      this.w2[0].length !== this.hiddenSize
     ) {
       throw new Error(
         `NN matrix shape mismatch: w1=${this.w1?.length}x${this.w1?.[0]?.length} ` +
-        `(expected ${this.hiddenSize}x${this.inputSize}), ` +
-        `w2=${this.w2?.length}x${this.w2?.[0]?.length} ` +
-        `(expected ${this.outputSize}x${this.hiddenSize})`
+          `(expected ${this.hiddenSize}x${this.inputSize}), ` +
+          `w2=${this.w2?.length}x${this.w2?.[0]?.length} ` +
+          `(expected ${this.outputSize}x${this.hiddenSize})`,
       );
     }
 
