@@ -5,11 +5,12 @@
  */
 export const CONFIG = {
   // ── Physics ───────────────────────────────────────────────────────────────
-  //   newVel = (accel * k + vel) * l     (applied per-second via dt)
-  //   position += newVel * dt
-  k: 0.08, // acceleration contribution (0–1)
-  l: 0.92, // velocity retention per second (0=stop,1=no friction)
-  maxVelocity: 120, // px / second
+  // deltaA (0-100): acceleration multiplier – how strongly NN forces affect velocity
+  // deltaV (0-100): velocity target scale – how quickly gizmo reaches target speed
+  // No friction: velocity is only bounded by maxVelocity cap
+  deltaA: 3, // default: gentle acceleration
+  deltaV: 3, // default: gentle velocity buildup
+  maxVelocity: 120, // px / second cap
 
   // ── Gene ranges (applied when creating gizmos) ────────────────────────────
   visionMin: 35,

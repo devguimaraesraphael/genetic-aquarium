@@ -85,10 +85,12 @@ export function setupGui(gui, config, deps) {
 
   // Physics
   const physicsFolder = gui.addFolder("Physics");
-  physicsFolder.add(config, "k", 0, 1, 0.001).name("K  — accel contribution");
   physicsFolder
-    .add(config, "l", 0, 1, 0.001)
-    .name("L  — friction (per second)");
+    .add(config, "deltaA", 0, 100, 0.5)
+    .name("deltaA — accel multiplier");
+  physicsFolder
+    .add(config, "deltaV", 0, 100, 0.5)
+    .name("deltaV — velocity scale");
   physicsFolder
     .add(config, "maxVelocity", 0, 1000, 5)
     .name("Max Velocity (px/s)");

@@ -89,6 +89,7 @@ function startSimulation() {
   paused = false;
   foodManager = new FoodManager(scene, config);
   ctrl.createGizmos();
+  _updatePauseIndicator();
 }
 
 // ── Camera zoom state ─────────────────────────────────────────────────────────
@@ -100,11 +101,46 @@ const originalCameraWidth = window.innerWidth;
 const originalCameraHeight = window.innerHeight;
 const zoomSpeed = 5;
 
+// ── Pause indicator (bottom-right) ───────────────────────────────────────────
+const _pauseIndicator = (() => {
+  const el = document.createElement("div");
+  Object.assign(el.style, {
+    position: "fixed",
+    bottom: "14px",
+    right: "14px",
+    padding: "5px 12px",
+    borderRadius: "8px",
+    fontFamily: "'Segoe UI', system-ui, sans-serif",
+    fontSize: "13px",
+    fontWeight: "700",
+    letterSpacing: "0.08em",
+    border: "1.5px solid",
+    pointerEvents: "none",
+    zIndex: "200",
+    opacity: "0.9",
+  });
+  document.body.appendChild(el);
+  return el;
+})();
+
+function _updatePauseIndicator() {
+  const show = paused || !simulationStarted;
+  _pauseIndicator.textContent = !simulationStarted
+    ? "⏸ NOT STARTED"
+    : "⏸ PAUSED";
+  _pauseIndicator.style.display = show ? "block" : "none";
+  _pauseIndicator.style.color = "#ffcc44";
+  _pauseIndicator.style.borderColor = "#ffcc44";
+  _pauseIndicator.style.background = "rgba(0,0,0,0.6)";
+}
+_updatePauseIndicator();
+
 // ── Pause on Space ────────────────────────────────────────────────────────────
 window.addEventListener("keydown", (e) => {
   if (e.code === "Space" && e.target === document.body) {
     e.preventDefault();
     paused = !paused;
+    _updatePauseIndicator();
   }
 });
 

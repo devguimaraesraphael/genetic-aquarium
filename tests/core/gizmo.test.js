@@ -392,29 +392,26 @@ describe("4. Gizmo – Receives and applies NN output", () => {
     expect(typeof g._nnFaultStack).toBe("string");
   });
 
-  it("NN outputs influence acceleration direction", () => {
+  it("NN outputs influence velocity direction", () => {
     const scene1 = new THREE.Scene();
     const scene2 = new THREE.Scene();
 
     // Gizmo 1: forced output toward +x (ax=1, ay=0.5)
     const g1 = new Gizmo(scene1, CONFIG);
-    g1.nn.forward = () => [1, 0.5, 0]; // ax=1 → target right
+    g1.nn.forward = () => [1, 0.5, 0]; // out[0]=1 → accelX = (1*2-1)*nnAccelScale = +nnAccelScale
     g1.velocity.set(0, 0);
-    g1.acceleration.set(0, 0); // start neutral
-    // Run enough frames so lerp has time to steer
-    for (let i = 0; i < 30; i++) g1.update(0.1, CONFIG, [g1], NO_FOOD);
-    const ax1 = g1.acceleration.x;
+    for (let i = 0; i < 10; i++) g1.update(0.1, CONFIG, [g1], NO_FOOD);
+    const vx1 = g1.velocity.x;
 
     // Gizmo 2: forced output toward -x (ax=0, ay=0.5)
     const g2 = new Gizmo(scene2, CONFIG);
-    g2.nn.forward = () => [0, 0.5, 0]; // ax=0 → target left
+    g2.nn.forward = () => [0, 0.5, 0]; // out[0]=0 → accelX = -nnAccelScale
     g2.velocity.set(0, 0);
-    g2.acceleration.set(0, 0);
-    for (let i = 0; i < 30; i++) g2.update(0.1, CONFIG, [g2], NO_FOOD);
-    const ax2 = g2.acceleration.x;
+    for (let i = 0; i < 10; i++) g2.update(0.1, CONFIG, [g2], NO_FOOD);
+    const vx2 = g2.velocity.x;
 
-    // After enough frames, g1 should steer right (positive x), g2 left (negative x)
-    expect(ax1).toBeGreaterThan(ax2);
+    // g1 steers right (positive x velocity), g2 steers left (negative x velocity)
+    expect(vx1).toBeGreaterThan(vx2);
   });
 });
 

@@ -20,14 +20,18 @@ import * as THREE from "three";
  * @param {number} dt
  */
 export function applyPhysics(gizmo, accelX, accelY, config, dt) {
-  const k = config.k;
-  const deltaK = Math.min(k * dt, 1);
-  const frictionFactor = Math.pow(config.l, dt);
+  const deltaA = config.deltaA ?? 3; // acceleration multiplier (0-100)
+  const deltaV = config.deltaV ?? 3; // velocity approach rate  (0-100)
 
-  // lerp() mutates in-place and returns this – do NOT use += with it
-  gizmo.acceleration.lerp(new THREE.Vector2(accelX, accelY), deltaK);
-  gizmo.velocity.lerp(gizmo.acceleration, deltaK);
-  gizmo.velocity.multiplyScalar(frictionFactor);
+  // Target velocity driven by NN acceleration output, scaled by deltaA.
+  // Velocity approaches target at a rate controlled by deltaV.
+  // No friction factor – velocity is only bounded by the maxVelocity cap.
+  const targetX = accelX * deltaA;
+  const targetY = accelY * deltaA;
+  const approach = deltaV / 100;
+
+  gizmo.velocity.x += (targetX - gizmo.velocity.x) * approach;
+  gizmo.velocity.y += (targetY - gizmo.velocity.y) * approach;
 
   const speed = gizmo.velocity.length();
   if (speed > config.maxVelocity) {
