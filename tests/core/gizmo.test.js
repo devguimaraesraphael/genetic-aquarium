@@ -246,10 +246,11 @@ describe("3. Gizmo – Rendering in Three.js scene", () => {
     expect(g.bodyMesh).toBeInstanceOf(THREE.Mesh);
   });
 
-  it("spikeMesh exists and is a THREE.Mesh", () => {
+  it("spikeMesh exists and is a THREE.Group (arrow)", () => {
     const g = new Gizmo(scene, CONFIG);
     expect(g.spikeMesh).toBeDefined();
-    expect(g.spikeMesh).toBeInstanceOf(THREE.Mesh);
+    expect(g.spikeMesh).toBeInstanceOf(THREE.Group);
+    expect(g.spikeMesh.children.length).toBeGreaterThan(0);
   });
 
   it("bodyGroup contains bodyMesh and spikeMesh", () => {
@@ -268,14 +269,17 @@ describe("3. Gizmo – Rendering in Three.js scene", () => {
     expect(g.bodyMesh.material.color.getHex()).toBe(0xdd2200);
   });
 
-  it("herbivore spike color is yellow (0xffff00)", () => {
+  it("herbivore arrow color is yellow (0xffff00)", () => {
     const g = new Gizmo(scene, CONFIG, { identity: IDENTITY_HERBIVORE });
-    expect(g.spikeMesh.material.color.getHex()).toBe(0xffff00);
+    // spikeMesh is a Group; check first child's material
+    const firstChild = g.spikeMesh.children[0];
+    expect(firstChild?.material?.color?.getHex()).toBe(0xffff00);
   });
 
-  it("carnivore spike color is orange-red (0xff4400)", () => {
+  it("carnivore arrow color is orange-red (0xff4400)", () => {
     const g = new Gizmo(scene, CONFIG, { identity: IDENTITY_CARNIVORE });
-    expect(g.spikeMesh.material.color.getHex()).toBe(0xff4400);
+    const firstChild = g.spikeMesh.children[0];
+    expect(firstChild?.material?.color?.getHex()).toBe(0xff4400);
   });
 
   it("dead gizmo has group.visible = false", () => {

@@ -110,8 +110,8 @@ export class Gizmo {
 
   // ── Reproduction ────────────────────────────────────────────────────────────
 
-  reproduce(config) {
-    return _reproduceGizmo(this, config);
+  reproduce(config, currentPopulation = 0) {
+    return _reproduceGizmo(this, config, currentPopulation);
   }
   static mutateColor(color, delta = 0.05) {
     return mutateColor(color, delta);

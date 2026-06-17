@@ -1,17 +1,26 @@
 /**
  * gizmoMesh.js – minimal 2D flat meshes for Gizmo rendering.
- * All geometries are flat (no 3D depth), no emissive, MeshBasicMaterial only.
+ *
+ * Each Gizmo is composed of:
+ *   1. Body   – filled circle (16 segments), MeshBasicMaterial
+ *   2. Arrow  – a velocity-direction indicator:
+ *               a stem line from circle edge to tip + a small filled arrowhead
+ *               Rendered in the bodyGroup so it rotates with the group.
+ *
+ * No emissive, no lights, no 3D geometry.
  */
 
 import * as THREE from "three";
 
-export const GIZMO_BASE_RADIUS = 6; // px at size = 1  (was 15 – too large)
+export const GIZMO_BASE_RADIUS = 6; // px at size = 1
 
 const IDENTITY_HERBIVORE = "herbivore";
 
+// ── Body ────────────────────────────────────────────────────────────────────
+
 export function buildBodyMesh(identity, size) {
   const r = GIZMO_BASE_RADIUS * size;
-  const geo = new THREE.CircleGeometry(r, 16); // 16 segments is enough for small circles
+  const geo = new THREE.CircleGeometry(r, 16);
   const mat = new THREE.MeshBasicMaterial({
     color: identity === IDENTITY_HERBIVORE ? 0x00cc33 : 0xdd2200,
   });
@@ -20,29 +29,61 @@ export function buildBodyMesh(identity, size) {
   return mesh;
 }
 
+// ── Arrow (direction indicator) ─────────────────────────────────────────────
+
 /**
- * Direction indicator: a small flat triangle pointing forward (+Y in local space).
- * No LatheGeometry – just 3 flat vertices.
+ * Returns a Group containing:
+ *   - A stem line from the body edge to the arrowhead base
+ *   - A filled triangle arrowhead
+ *
+ * The arrow points along +Y in local space; the bodyGroup is rotated
+ * so +Y aligns with the velocity direction.
  */
 export function buildSpikeMesh(identity, size) {
   const r = GIZMO_BASE_RADIUS * size;
-  const tip = r * 1.6; // tip extends 1.6× body radius forward
-  const base = r * 0.5; // half-width of base
+  const stemStart = r; // start at body edge
+  const stemEnd = r * 1.8; // end of stem / base of head
+  const headTip = r * 2.6; // tip of arrowhead
+  const headBase = r * 0.55; // half-width of arrowhead base
 
-  // Triangle: tip at (0, tip), base at (±base, 0) – all in XY plane (z=0)
-  const positions = new Float32Array([0, tip, 0, -base, 0, 0, base, 0, 0]);
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  geo.computeVertexNormals();
+  const color = identity === IDENTITY_HERBIVORE ? 0xffff00 : 0xff4400;
+  const group = new THREE.Group();
 
-  const mat = new THREE.MeshBasicMaterial({
-    color: identity === IDENTITY_HERBIVORE ? 0xffff00 : 0xff4400,
-    side: THREE.DoubleSide,
-  });
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.position.z = 0.2;
-  return mesh;
+  // Stem: a Line from bodyEdge → headBase
+  const stemGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0, stemStart, 0.15),
+    new THREE.Vector3(0, stemEnd, 0.15),
+  ]);
+  const stemLine = new THREE.Line(
+    stemGeo,
+    new THREE.LineBasicMaterial({ color }),
+  );
+  group.add(stemLine);
+
+  // Arrowhead: filled triangle
+  const headPos = new Float32Array([
+    0,
+    headTip,
+    0.2, // tip
+    -headBase,
+    stemEnd,
+    0.2, // left base
+    headBase,
+    stemEnd,
+    0.2, // right base
+  ]);
+  const headGeo = new THREE.BufferGeometry();
+  headGeo.setAttribute("position", new THREE.BufferAttribute(headPos, 3));
+  const headMesh = new THREE.Mesh(
+    headGeo,
+    new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide }),
+  );
+  group.add(headMesh);
+
+  return group;
 }
+
+// ── Vision circle ────────────────────────────────────────────────────────────
 
 export function buildVisionMesh(visionRange) {
   const geo = new THREE.CircleGeometry(visionRange, 32);
@@ -52,6 +93,8 @@ export function buildVisionMesh(visionRange) {
   mesh.visible = false;
   return mesh;
 }
+
+// ── Selection marker ─────────────────────────────────────────────────────────
 
 export function buildSeenTargetMarker() {
   const geo = new THREE.CircleGeometry(4, 8);

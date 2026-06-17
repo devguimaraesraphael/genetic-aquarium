@@ -8,10 +8,21 @@ import { mutateColor } from "./colors.js";
 
 /**
  * Clone parent Gizmo into a child with slight mutations.
- * Returns the new Gizmo instance, or null if reproduction not ready.
+ * @param {Gizmo} parent
+ * @param {object} config
+ * @param {number} currentPopulation – current live gizmo count; cap is config.gizmoCount
+ * Returns the new Gizmo instance, or null if reproduction not ready or cap reached.
  */
-export function reproduce(parent, config) {
+export function reproduce(parent, config, currentPopulation = 0) {
   if (!parent.readyToReproduce) return null;
+
+  const cap = config.gizmoCount ?? 20;
+  if (currentPopulation >= cap) {
+    // Cap reached – reset energy so the check runs again next time
+    parent.readyToReproduce = false;
+    parent.reproductionEnergy = Math.floor(cap / 2); // keep half so it can try again
+    return null;
+  }
 
   const childGenes = {
     vision:
