@@ -14,8 +14,8 @@ export const CONFIG = {
   // ── Gene ranges (applied when creating gizmos) ────────────────────────────
   visionMin: 35,
   visionMax: 90,
-  sizeMin: 0.6,
-  sizeMax: 1.4,
+  sizeMin: 0.7,
+  sizeMax: 1.2,
 
   // ── Aquarium dimensions (overridden on first load to window size) ─────────
   aquariumWidth: 1200,

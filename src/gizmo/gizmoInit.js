@@ -41,6 +41,8 @@ export function initGizmoState(gizmo, scene, config, options) {
     visionRange: options.visionRange ?? [config.visionMin, config.visionMax],
     size: options.size ?? 1,
   };
+  // bodyRadius used for click detection and eating range
+  gizmo.bodyRadius = 6 * (options.size ?? 1);
 
   gizmo.identity =
     options.identity ??

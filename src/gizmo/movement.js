@@ -8,7 +8,7 @@
 
 import * as THREE from "three";
 
-const GIZMO_BASE_RADIUS = 15;
+// bodyRadius is now stored on the gizmo instance; this constant is no longer used for eat detection
 
 /**
  * Apply lerp-based physics: steer acceleration toward target, apply friction.
@@ -61,7 +61,7 @@ export function advancePosition(gizmo, config, dt) {
 export function tryEat(gizmo, foodManager) {
   if (!foodManager || !foodManager.foods) return;
 
-  const eatRadius = GIZMO_BASE_RADIUS * gizmo.genes.size * 1.5;
+  const eatRadius = (gizmo.bodyRadius ?? 6) * 1.5; // use stored bodyRadius
   for (const food of foodManager.foods) {
     if (food.size < 0.01) continue;
     const dist = gizmo.position.distanceTo(new THREE.Vector2(food.x, food.y));

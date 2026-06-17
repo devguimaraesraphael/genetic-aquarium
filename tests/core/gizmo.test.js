@@ -258,14 +258,14 @@ describe("3. Gizmo – Rendering in Three.js scene", () => {
     expect(g.bodyGroup.children).toContain(g.spikeMesh);
   });
 
-  it("herbivore body color is green (0x00ff00)", () => {
+  it("herbivore body color is green", () => {
     const g = new Gizmo(scene, CONFIG, { identity: IDENTITY_HERBIVORE });
-    expect(g.bodyMesh.material.color.getHex()).toBe(0x00ff00);
+    expect(g.bodyMesh.material.color.getHex()).toBe(0x00cc33);
   });
 
-  it("carnivore body color is red (0xff0000)", () => {
+  it("carnivore body color is red", () => {
     const g = new Gizmo(scene, CONFIG, { identity: IDENTITY_CARNIVORE });
-    expect(g.bodyMesh.material.color.getHex()).toBe(0xff0000);
+    expect(g.bodyMesh.material.color.getHex()).toBe(0xdd2200);
   });
 
   it("herbivore spike color is yellow (0xffff00)", () => {
@@ -273,9 +273,9 @@ describe("3. Gizmo – Rendering in Three.js scene", () => {
     expect(g.spikeMesh.material.color.getHex()).toBe(0xffff00);
   });
 
-  it("carnivore spike color is red (0xff0000)", () => {
+  it("carnivore spike color is orange-red (0xff4400)", () => {
     const g = new Gizmo(scene, CONFIG, { identity: IDENTITY_CARNIVORE });
-    expect(g.spikeMesh.material.color.getHex()).toBe(0xff0000);
+    expect(g.spikeMesh.material.color.getHex()).toBe(0xff4400);
   });
 
   it("dead gizmo has group.visible = false", () => {
