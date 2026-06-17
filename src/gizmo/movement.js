@@ -20,25 +20,48 @@ import * as THREE from "three";
  * @param {number} dt
  */
 export function applyPhysics(gizmo, accelX, accelY, config, dt) {
-  const deltaA = config.deltaA ?? 3; // acceleration multiplier (0-100)
-  const deltaV = config.deltaV ?? 3; // velocity approach rate  (0-100)
+  // Proper Newtonian chain: force → acceleration → velocity → position
+  //   F = ma  (unit mass, so a = F)
+  //   velocity += acceleration * dt
+  //   position += velocity * dt  (done in advancePosition)
+  //
+  // deltaA: scales the NN force output (0–100, default 3)
+  // deltaV: drag coefficient that limits top speed (0–100, default 3)
+  //   drag = -velocity * (deltaV/100)  applied each frame
+  //
+  // The exponential lerp on acceleration smooths transitions so the
+  // direction vector doesn't flip instantly when the NN changes output.
 
-  // Target velocity driven by NN acceleration output, scaled by deltaA.
-  // Velocity approaches target at a rate controlled by deltaV.
-  // No friction factor – velocity is only bounded by the maxVelocity cap.
-  const targetX = accelX * deltaA;
-  const targetY = accelY * deltaA;
-  const approach = deltaV / 100;
+  const deltaA = config.deltaA ?? 3;
+  const deltaV = config.deltaV ?? 3;
 
-  gizmo.velocity.x += (targetX - gizmo.velocity.x) * approach;
-  gizmo.velocity.y += (targetY - gizmo.velocity.y) * approach;
+  // NN outputs a target force direction/magnitude
+  const forceX = accelX * deltaA;
+  const forceY = accelY * deltaA;
 
+  // Smooth acceleration toward target force (frame-rate-independent lerp)
+  // Rate 5 gives ~0.5s half-life at 60fps – snappy but not instant
+  const accelRate = 1 - Math.exp(-5 * dt);
+  gizmo.acceleration.x += (forceX - gizmo.acceleration.x) * accelRate;
+  gizmo.acceleration.y += (forceY - gizmo.acceleration.y) * accelRate;
+
+  // Integrate acceleration into velocity
+  gizmo.velocity.x += gizmo.acceleration.x * dt;
+  gizmo.velocity.y += gizmo.acceleration.y * dt;
+
+  // Apply drag proportional to velocity (simulates fluid resistance)
+  const drag = 1 - (deltaV / 100) * dt;
+  gizmo.velocity.x *= Math.max(0, drag);
+  gizmo.velocity.y *= Math.max(0, drag);
+
+  // Clamp to max speed
   const speed = gizmo.velocity.length();
   if (speed > config.maxVelocity) {
     gizmo.velocity.multiplyScalar(config.maxVelocity / speed);
   }
 
-  if (speed > 0.1) {
+  // Direction follows velocity only when moving meaningfully
+  if (speed > 0.5) {
     gizmo.direction.copy(gizmo.velocity).normalize();
   }
 }
@@ -52,10 +75,10 @@ export function advancePosition(gizmo, config, dt) {
 
   const hw = config.aquariumWidth / 2;
   const hh = config.aquariumHeight / 2;
-  if (gizmo.position.x < -hw) gizmo.position.x += config.aquariumWidth;
-  if (gizmo.position.x > hw) gizmo.position.x -= config.aquariumWidth;
-  if (gizmo.position.y < -hh) gizmo.position.y += config.aquariumHeight;
-  if (gizmo.position.y > hh) gizmo.position.y -= config.aquariumHeight;
+  if (gizmo.position.x < -hw) gizmo.position.x = -hw;
+  if (gizmo.position.x > hw) gizmo.position.x = hw;
+  if (gizmo.position.y < -hh) gizmo.position.y = -hh;
+  if (gizmo.position.y > hh) gizmo.position.y = hh;
 }
 
 /**

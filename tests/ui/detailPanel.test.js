@@ -8,6 +8,7 @@ function makeGizmoDetails() {
     colorHex: "#00ff88",
     size: "1.00",
     vision: "70.0",
+    speed: "42.3",
     score: 3,
     age: "12.5",
     timeSinceEat: "9.2",
@@ -43,11 +44,11 @@ describe("detail panel layout and fields", () => {
     const html = document.getElementById("aq-dtable").innerHTML;
     expect(html).toContain("Score");
     expect(html).toContain("Idade");
+    expect(html).toContain("Velocidade");
     expect(html).toContain("Tempo sem comer");
 
     expect(html).not.toContain("Pos X");
     expect(html).not.toContain("Pos Y");
-    expect(html).not.toContain("Velocidade");
     expect(html).not.toContain("Aceleração");
     expect(html).not.toContain("Ativa");
     expect(html).not.toContain("Sensoriando");

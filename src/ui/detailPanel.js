@@ -80,6 +80,7 @@ export function update(gizmo) {
     <tr><td>Cor</td><td><span style="font-family:monospace">${d.colorHex}</span> <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${d.colorHex};vertical-align:middle;border:1px solid rgba(255,255,255,0.3)"></span></td></tr>
     <tr><td>Tamanho</td><td>${d.size}</td></tr>
     <tr><td>Visão</td><td>${d.vision} px</td></tr>
+    <tr><td>Velocidade</td><td>${d.speed} px/s</td></tr>
     <tr><td>Score 🍃</td><td>${d.score}</td></tr>
     <tr><td>Idade</td><td>${d.age} s</td></tr>
     <tr>

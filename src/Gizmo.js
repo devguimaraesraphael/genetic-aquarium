@@ -150,6 +150,7 @@ export class Gizmo {
       ),
       score: this.score.toFixed(0),
       age: this.age.toFixed(1),
+      speed: this.velocity.length().toFixed(1),
       timeSinceEat: this.starvationCounter.toFixed(1),
       starvationPct: this.starvationCounter / starvLimit,
       nnOut: `[${this._lastOutputs.map((x) => x.toFixed(3)).join(", ")}]`,
