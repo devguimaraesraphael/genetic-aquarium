@@ -62,8 +62,13 @@ export function setupGui(gui, config, deps) {
     .add(config, "gizmoMaxWallTime", 5, 120, 5)
     .name("Wall trap (s)");
   lifespanFolder
-    .add(hofStats, "generation")
-    .name("Generation")
+    .add(hofStats, "herbGeneration")
+    .name("Herb Generation")
+    .listen()
+    .disable(false);
+  lifespanFolder
+    .add(hofStats, "carnGeneration")
+    .name("Carn Generation")
     .listen()
     .disable(false);
   lifespanFolder
@@ -200,7 +205,8 @@ export function setupGui(gui, config, deps) {
           nCarns,
           true,
         );
-        hofStats.generation += 1;
+        hofStats.herbGeneration = (hofStats.herbGeneration ?? 1) + 1;
+        hofStats.carnGeneration = (hofStats.carnGeneration ?? 1) + 1;
       },
     },
     "⭐ Restaurar Melhores Genes",

@@ -65,7 +65,7 @@ const plankton = setupPlankton(scene);
 
 // ── Simulation objects ────────────────────────────────────────────────────────
 const hallOfFame = new HallOfFame();
-const hofStats = { herb: 0, carn: 0, generation: 1 };
+const hofStats = { herb: 0, carn: 0, herbGeneration: 1, carnGeneration: 1 };
 let foodManager = null;
 const foodStats = { count: 0 };
 const effects = new EffectsManager(scene);

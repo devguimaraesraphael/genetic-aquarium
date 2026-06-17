@@ -3,8 +3,9 @@ export function splitGizmosByType(gizmos) {
   const carnivores = [];
 
   gizmos.forEach((g) => {
-    if (g.identity?.[1] === 1) herbivores.push(g);
-    else if (g.identity?.[2] === 1) carnivores.push(g);
+    // identity is a STRING ("herbivore" / "carnivore") – never an array
+    if (g.identity === "herbivore") herbivores.push(g);
+    else if (g.identity === "carnivore") carnivores.push(g);
   });
 
   return { herbivores, carnivores };

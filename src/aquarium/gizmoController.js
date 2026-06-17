@@ -49,11 +49,13 @@ export class GizmoController {
   }
 
   spawnGeneration(hofSlot, count, isCarnivore) {
+    const cap = this.config.gizmoCount ?? 20;
     const id = isCarnivore ? IDENTITY_CARNIVORE : IDENTITY_HERBIVORE;
     const mutRate = this.config.nnMutationRate ?? 1.0;
     const mutDelta = this.config.nnMutationDelta ?? 0.01;
 
     for (let i = 0; i < count; i++) {
+      if (this.gizmos.length >= cap) break; // hard cap – never exceed
       if (Math.random() < RANDOM_RATE) {
         this.gizmos.push(new Gizmo(this.scene, this.config, { identity: id }));
         continue;

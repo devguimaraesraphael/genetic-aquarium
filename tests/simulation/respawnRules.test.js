@@ -4,8 +4,8 @@ import {
   getRespawnPlan,
 } from "../../src/simulation/respawnRules.js";
 
-const herb = (id) => ({ id, identity: [0, 1, 0] });
-const carn = (id) => ({ id, identity: [0, 0, 1] });
+const herb = (id) => ({ id, identity: "herbivore" });
+const carn = (id) => ({ id, identity: "carnivore" });
 
 describe("respawn rules by class list", () => {
   it("splits gizmos into herbivore and carnivore lists", () => {

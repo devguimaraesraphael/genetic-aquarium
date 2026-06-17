@@ -53,44 +53,59 @@ export function simulationTick(dt, ctx) {
     ctrl.updateGizmoList();
   }
 
-  // Respawn logic
+  // Respawn logic – only fires when a type goes extinct, respects population cap
   const total = config.gizmoCount ?? 20;
   const carnRatio = config.carnivoreRatio ?? 0.1;
   const respawnPlan = getRespawnPlan(ctrl.gizmos, total, carnRatio);
+  const currentPop = ctrl.gizmos.length;
 
   if (respawnPlan.fullExtinction) {
-    hofStats.generation += 1;
-    hofStats.herb = 0;
-    hofStats.carn = 0;
+    // Both types extinct – new joint generation only if there is HoF data
     if (hallOfFame.herbivores.length > 0 || hallOfFame.carnivores.length > 0) {
-      if (respawnPlan.spawnHerbivores > 0) {
+      const nCarns = Math.max(0, Math.round(total * carnRatio));
+      const nHerbs = Math.max(0, total - nCarns);
+      hofStats.herbGeneration = (hofStats.herbGeneration ?? 1) + 1;
+      hofStats.carnGeneration = (hofStats.carnGeneration ?? 1) + 1;
+      hofStats.herb = 0;
+      hofStats.carn = 0;
+      if (nHerbs > 0) {
         ctrl.spawnGeneration(
-          hallOfFame.herbivores.length > 0 ? "herbivores" : "carnivores",
-          respawnPlan.spawnHerbivores,
+          "herbivores",
+          Math.min(nHerbs, total - ctrl.gizmos.length),
           false,
         );
       }
-      if (respawnPlan.spawnCarnivores > 0) {
+      if (nCarns > 0 && ctrl.gizmos.length < total) {
         ctrl.spawnGeneration(
-          hallOfFame.carnivores.length > 0 ? "carnivores" : "herbivores",
-          respawnPlan.spawnCarnivores,
+          "carnivores",
+          Math.min(nCarns, total - ctrl.gizmos.length),
           true,
         );
       }
     } else {
+      // No HoF yet – just recreate from scratch
       ctrl.createGizmos();
     }
   } else {
-    if (respawnPlan.spawnHerbivores > 0) {
-      hofStats.generation += 1;
+    // Partial extinction – only spawn the missing type if under cap
+    if (respawnPlan.spawnHerbivores > 0 && currentPop < total) {
+      const canSpawn = Math.min(
+        respawnPlan.spawnHerbivores,
+        total - currentPop,
+      );
+      hofStats.herbGeneration = (hofStats.herbGeneration ?? 1) + 1;
       hofStats.herb = 0;
       foodManager.reset();
-      ctrl.spawnGeneration("herbivores", respawnPlan.spawnHerbivores, false);
+      ctrl.spawnGeneration("herbivores", canSpawn, false);
     }
-    if (respawnPlan.spawnCarnivores > 0) {
-      hofStats.generation += 1;
+    if (respawnPlan.spawnCarnivores > 0 && ctrl.gizmos.length < total) {
+      const canSpawn = Math.min(
+        respawnPlan.spawnCarnivores,
+        total - ctrl.gizmos.length,
+      );
+      hofStats.carnGeneration = (hofStats.carnGeneration ?? 1) + 1;
       hofStats.carn = 0;
-      ctrl.spawnGeneration("carnivores", respawnPlan.spawnCarnivores, true);
+      ctrl.spawnGeneration("carnivores", canSpawn, true);
     }
   }
 
