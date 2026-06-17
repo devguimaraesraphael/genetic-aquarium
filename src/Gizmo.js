@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { IDENTITY } from "./Identity.js";
+import { NeuralNetwork } from "./NeuralNetwork.js";
 import {
   buildBodyMesh,
   buildSpikeMesh,
@@ -36,7 +37,7 @@ export class Gizmo {
     this._isSelected = false;
     this._buildVisionMesh();
     this._seenTargetMarker = this._buildSeenTargetMarker();
-    this.group.add(this._seenTargetMarker);
+    this._scene.add(this._seenTargetMarker); // world-space: must NOT be child of group
   }
 
   // ── Mesh building ──────────────────────────────────────────────────────────
@@ -75,6 +76,32 @@ export class Gizmo {
   }
 
   _inferNN(inputs, config) {
+    // Guard: if NN shape doesn't match current config, rebuild it in-place.
+    // This can happen when HoF weights from an old session were applied, or
+    // when config.nnHiddenSize is changed via the GUI on a live gizmo.
+    const expHidden = config.nnHiddenSize ?? 6;
+    const shapeValid =
+      this.nn &&
+      this.nn.inputSize === 12 &&
+      this.nn.hiddenSize === expHidden &&
+      this.nn.outputSize === 3 &&
+      Array.isArray(this.nn.w1) &&
+      this.nn.w1.length === expHidden &&
+      Array.isArray(this.nn.w1[0]) &&
+      this.nn.w1[0].length === 12 &&
+      Array.isArray(this.nn.w2) &&
+      this.nn.w2.length === 3 &&
+      Array.isArray(this.nn.w2[0]) &&
+      this.nn.w2[0].length === expHidden;
+
+    if (!shapeValid) {
+      console.warn(
+        `[Gizmo #${this.id}] NN shape invalid (hidden=${this.nn?.hiddenSize}, ` +
+          `expected=${expHidden}) – rebuilding`,
+      );
+      this.nn = new NeuralNetwork(12, expHidden, 3);
+    }
+
     const r = inferNN(this.nn, inputs, this.id, config);
     this._nnFault = r.fault;
     this._nnFaultReason = r.reason;
@@ -110,7 +137,7 @@ export class Gizmo {
       Math.atan2(this.direction.y, this.direction.x) - Math.PI / 2;
 
     if (eat && foodManager) tryEat(this, foodManager);
-    if (this._isSelected) updateSeenTargetMarker(this, allGizmos);
+    if (this._isSelected) updateSeenTargetMarker(this, allGizmos, foodManager);
   }
 
   // ── Reproduction ────────────────────────────────────────────────────────────
@@ -162,6 +189,9 @@ export class Gizmo {
 
   destroy() {
     if (this.group.parent) this.group.parent.remove(this.group);
+    if (this._seenTargetMarker && this._seenTargetMarker.parent) {
+      this._seenTargetMarker.parent.remove(this._seenTargetMarker);
+    }
     this.isDead = true;
   }
   dispose() {

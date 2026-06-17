@@ -11,6 +11,7 @@ export const CONFIG = {
   deltaA: 3, // default: gentle acceleration
   deltaV: 3, // default: gentle velocity buildup
   maxVelocity: 120, // px / second cap
+  maxAcceleration: 400, // px / second² cap – keeps direction changes feeling organic
 
   // ── Gene ranges (applied when creating gizmos) ────────────────────────────
   visionMin: 35,

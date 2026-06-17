@@ -45,6 +45,13 @@ export function applyPhysics(gizmo, accelX, accelY, config, dt) {
   gizmo.acceleration.x += (forceX - gizmo.acceleration.x) * accelRate;
   gizmo.acceleration.y += (forceY - gizmo.acceleration.y) * accelRate;
 
+  // Clamp acceleration magnitude
+  const accelMag = gizmo.acceleration.length();
+  const maxAccel = config.maxAcceleration ?? 400;
+  if (accelMag > maxAccel) {
+    gizmo.acceleration.multiplyScalar(maxAccel / accelMag);
+  }
+
   // Integrate acceleration into velocity
   gizmo.velocity.x += gizmo.acceleration.x * dt;
   gizmo.velocity.y += gizmo.acceleration.y * dt;
@@ -104,25 +111,45 @@ export function tryEat(gizmo, foodManager) {
 }
 
 /**
- * Update the seen-target marker to point at the nearest other gizmo.
+ * Update the seen-target marker to point at the nearest gizmo or food item.
+ * Marker lives in world space (added to scene, not to gizmo.group).
  * Only called when gizmo is selected.
  */
-export function updateSeenTargetMarker(gizmo, allGizmos) {
-  let nearest = null,
-    minDist = Infinity;
+export function updateSeenTargetMarker(gizmo, allGizmos, foodManager) {
+  let nearestX = null;
+  let nearestY = null;
+  let minDist = Infinity;
+
+  // Check nearest other gizmo
   for (const other of allGizmos) {
     if (other === gizmo || other.isDead) continue;
     const dist = gizmo.position.distanceTo(other.position);
     if (dist < minDist) {
       minDist = dist;
-      nearest = other;
+      nearestX = other.position.x;
+      nearestY = other.position.y;
     }
   }
-  if (nearest) {
-    gizmo._seenTargetMarker.position.copy(nearest.position);
-    gizmo._seenTargetMarker.position.z = 0.15;
-    gizmo._seenTargetMarker.material.opacity = 0.5;
+
+  // Check nearest food
+  if (foodManager && foodManager.foods) {
+    for (const food of foodManager.foods) {
+      if (food.size < 0.01) continue;
+      const dx = food.x - gizmo.position.x;
+      const dy = food.y - gizmo.position.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < minDist) {
+        minDist = dist;
+        nearestX = food.x;
+        nearestY = food.y;
+      }
+    }
+  }
+
+  if (nearestX !== null) {
+    gizmo._seenTargetMarker.position.set(nearestX, nearestY, 0.5);
+    gizmo._seenTargetMarker.visible = true;
   } else {
-    gizmo._seenTargetMarker.material.opacity = 0;
+    gizmo._seenTargetMarker.visible = false;
   }
 }

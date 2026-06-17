@@ -101,17 +101,14 @@ export function buildVisionMesh(visionRange) {
   return mesh;
 }
 
-// ── Selection marker ─────────────────────────────────────────────────────────
+// ── Selection marker (red ring over nearest target) ─────────────────────────
 
 export function buildSeenTargetMarker() {
-  const geo = new THREE.CircleGeometry(4, 8);
-  const mat = new THREE.MeshBasicMaterial({
-    color: 0xff0000,
-    transparent: true,
-    opacity: 0,
-  });
-  const marker = new THREE.Mesh(geo, mat);
-  marker.position.z = 0.15;
+  const geo = new THREE.CircleGeometry(10, 24);
+  const edges = new THREE.EdgesGeometry(geo);
+  const mat = new THREE.LineBasicMaterial({ color: 0xff2222, linewidth: 2 });
+  const marker = new THREE.LineSegments(edges, mat);
+  marker.position.z = 0.5;
   marker.visible = false;
   return marker;
 }

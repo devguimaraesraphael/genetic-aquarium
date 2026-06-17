@@ -97,13 +97,25 @@ export class GizmoController {
       }
 
       if (pA && pB) {
-        g.nn.w1 = pA.nnW1.map((row, j) =>
-          row.map((w, k) => (Math.random() < 0.5 ? w : pB.nnW1[j][k])),
-        );
-        g.nn.w2 = pA.nnW2.map((row, j) =>
-          row.map((w, k) => (Math.random() < 0.5 ? w : pB.nnW2[j][k])),
-        );
-        g.nn.mutate(mutRate, mutDelta);
+        const expHidden = this.config.nnHiddenSize ?? 6;
+        const expInput = 12;
+        const expOutput = 3;
+        const shapeOk = (snap) =>
+          snap?.nnW1?.length === expHidden &&
+          snap?.nnW1?.[0]?.length === expInput &&
+          snap?.nnW2?.length === expOutput &&
+          snap?.nnW2?.[0]?.length === expHidden;
+
+        if (shapeOk(pA) && shapeOk(pB)) {
+          g.nn.w1 = pA.nnW1.map((row, j) =>
+            row.map((w, k) => (Math.random() < 0.5 ? w : pB.nnW1[j][k])),
+          );
+          g.nn.w2 = pA.nnW2.map((row, j) =>
+            row.map((w, k) => (Math.random() < 0.5 ? w : pB.nnW2[j][k])),
+          );
+          g.nn.mutate(mutRate, mutDelta);
+        }
+        // If shapes don't match current config, g.nn keeps freshly initialized random weights
       }
 
       this.gizmos.push(g);

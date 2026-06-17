@@ -94,6 +94,9 @@ export function setupGui(gui, config, deps) {
   physicsFolder
     .add(config, "maxVelocity", 0, 1000, 5)
     .name("Max Velocity (px/s)");
+  physicsFolder
+    .add(config, "maxAcceleration", 0, 2000, 10)
+    .name("Max Acceleration (px/s²)");
   physicsFolder.open();
 
   // Gene Ranges

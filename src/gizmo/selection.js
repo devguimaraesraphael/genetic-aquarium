@@ -32,6 +32,5 @@ export function deselectGizmo(gizmo) {
   _setArrowColor(gizmo.spikeMesh, defaultColor);
   if (gizmo._seenTargetMarker) {
     gizmo._seenTargetMarker.visible = false;
-    gizmo._seenTargetMarker.material.opacity = 0;
   }
 }
