@@ -74,7 +74,9 @@ export function applyPhysics(gizmo, accelX, accelY, config, dt) {
 }
 
 /**
- * Move gizmo by velocity*dt and wrap around aquarium borders.
+ * Move gizmo by velocity*dt and clamp to aquarium borders.
+ * Tracks continuous wall-contact time; kills the gizmo if it exceeds config.gizmoMaxWallTime.
+ * Returns true if the gizmo died from wall entrapment.
  */
 export function advancePosition(gizmo, config, dt) {
   gizmo.position.x += gizmo.velocity.x * dt;
@@ -82,10 +84,35 @@ export function advancePosition(gizmo, config, dt) {
 
   const hw = config.aquariumWidth / 2;
   const hh = config.aquariumHeight / 2;
-  if (gizmo.position.x < -hw) gizmo.position.x = -hw;
-  if (gizmo.position.x > hw) gizmo.position.x = hw;
-  if (gizmo.position.y < -hh) gizmo.position.y = -hh;
-  if (gizmo.position.y > hh) gizmo.position.y = hh;
+  let onWall = false;
+  if (gizmo.position.x < -hw) {
+    gizmo.position.x = -hw;
+    onWall = true;
+  }
+  if (gizmo.position.x > hw) {
+    gizmo.position.x = hw;
+    onWall = true;
+  }
+  if (gizmo.position.y < -hh) {
+    gizmo.position.y = -hh;
+    onWall = true;
+  }
+  if (gizmo.position.y > hh) {
+    gizmo.position.y = hh;
+    onWall = true;
+  }
+
+  if (onWall) {
+    gizmo.wallTime = (gizmo.wallTime ?? 0) + dt;
+    const maxWall = config.gizmoMaxWallTime ?? 30;
+    if (gizmo.wallTime >= maxWall) {
+      gizmo.isDead = true;
+      gizmo.group.visible = false;
+      return;
+    }
+  } else {
+    gizmo.wallTime = 0;
+  }
 }
 
 /**

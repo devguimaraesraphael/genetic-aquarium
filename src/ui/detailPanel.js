@@ -68,6 +68,7 @@ export function update(gizmo) {
   _currentGizmo = gizmo;
   const d = gizmo.getDetails();
   const starvPct = Math.max(0, Math.min(1, d.starvationPct ?? 0));
+  const wallPct = Math.max(0, Math.min(1, d.wallTimePct ?? 0));
   const nnBadge = document.getElementById("aq-nn-badge");
   nnBadge.style.display = "inline-block";
   nnBadge.textContent = d.nnFault ? "NN ERROR" : "NN OK";
@@ -88,6 +89,13 @@ export function update(gizmo) {
         <div style="color:#9fd0df;margin-bottom:3px;">Tempo sem comer</div>
         <div id="aq-starv-wrap"><div id="aq-starv-bar" style="width:${Math.round(starvPct * 100)}%"></div></div>
         <div id="aq-starv-label">${d.timeSinceEat} s</div>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="padding-top:6px;">
+        <div style="color:#9fd0df;margin-bottom:3px;">Tempo preso na parede</div>
+        <div id="aq-wall-wrap"><div id="aq-wall-bar" style="width:${Math.round(wallPct * 100)}%"></div></div>
+        <div id="aq-wall-label">${d.wallTime} s</div>
       </td>
     </tr>
     <tr><td>Saída [ax,ay,eat]</td><td style="font-size:11px">${d.nnOut}</td></tr>

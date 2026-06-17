@@ -167,6 +167,7 @@ export class Gizmo {
 
   getDetails() {
     const starvLimit = this._config?.gizmoStarvation ?? 120;
+    const wallLimit = this._config?.gizmoMaxWallTime ?? 30;
     return {
       id: this.id,
       type: this.identity === IDENTITY_HERBIVORE ? "herbivore" : "carnivore",
@@ -180,6 +181,8 @@ export class Gizmo {
       speed: this.velocity.length().toFixed(1),
       timeSinceEat: this.starvationCounter.toFixed(1),
       starvationPct: this.starvationCounter / starvLimit,
+      wallTime: (this.wallTime ?? 0).toFixed(1),
+      wallTimePct: Math.min(1, (this.wallTime ?? 0) / wallLimit),
       nnOut: `[${this._lastOutputs.map((x) => x.toFixed(3)).join(", ")}]`,
       nnFault: this._nnFault,
       nnFaultReason: this._nnFaultReason,

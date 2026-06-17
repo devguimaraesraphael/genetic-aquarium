@@ -20,25 +20,25 @@ describe("gizmo vision circle selection rule", () => {
     gizmo.dispose();
   });
 
-  it("red circle marker created and opacity controlled on select/deselect", () => {
+  it("red circle marker created and is a LineSegments ring", () => {
     const scene = new THREE.Scene();
     const cfg = { ...CONFIG };
     const gizmo = new Gizmo(scene, cfg, { identity: [0, 1, 0] });
 
-    // Marker should exist
+    // Marker should exist and be red
     expect(gizmo._seenTargetMarker).toBeTruthy();
-    expect(gizmo._seenTargetMarker.material.color.getHex()).toBe(0xff0000); // red
+    expect(gizmo._seenTargetMarker.material.color.getHex()).toBe(0xff2222);
 
-    // Should start invisible (opacity 0)
-    expect(gizmo._seenTargetMarker.material.opacity).toBe(0);
+    // Should start invisible
+    expect(gizmo._seenTargetMarker.visible).toBe(false);
 
     // On select with no target, marker stays invisible
     gizmo.select();
-    expect(gizmo._seenTargetMarker.material.opacity).toBe(0);
+    expect(gizmo._seenTargetMarker.visible).toBe(false);
 
     // On deselect, marker is hidden
     gizmo.deselect();
-    expect(gizmo._seenTargetMarker.material.opacity).toBe(0);
+    expect(gizmo._seenTargetMarker.visible).toBe(false);
 
     gizmo.dispose();
   });
@@ -64,8 +64,8 @@ describe("gizmo vision circle selection rule", () => {
     // Update again to update marker position
     gizmo1.update(0.016, cfg, [gizmo1, gizmo2], mockFoodManager);
 
-    // The marker should now be positioned at gizmo2's location with opacity > 0
-    expect(gizmo1._seenTargetMarker.material.opacity).toBeGreaterThan(0);
+    // The marker should now be visible and positioned at gizmo2's location
+    expect(gizmo1._seenTargetMarker.visible).toBe(true);
     expect(gizmo1._seenTargetMarker.position.x).toBeCloseTo(gizmo2.position.x);
     expect(gizmo1._seenTargetMarker.position.y).toBeCloseTo(gizmo2.position.y);
 

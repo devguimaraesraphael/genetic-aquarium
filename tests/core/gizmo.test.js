@@ -289,10 +289,11 @@ describe("3. Gizmo – Rendering in Three.js scene", () => {
     expect(g.group.visible).toBe(false);
   });
 
-  it("10 gizmos each add exactly one group to scene", () => {
+  it("10 gizmos each add group + marker to scene (2 objects each)", () => {
     const before = scene.children.length;
     Array.from({ length: 10 }, () => new Gizmo(scene, CONFIG));
-    expect(scene.children.length).toBe(before + 10);
+    // Each gizmo adds: 1 group + 1 seenTargetMarker = 2 scene children
+    expect(scene.children.length).toBe(before + 20);
   });
 
   it("visionMesh exists and starts hidden", () => {

@@ -56,6 +56,7 @@ export function initGizmoState(gizmo, scene, config, options) {
   gizmo.isDead = false;
   gizmo.age = 0;
   gizmo.starvationCounter = 0;
+  gizmo.wallTime = 0; // seconds of continuous wall contact
   gizmo.score = 0;
 
   gizmo._nnFault = false;

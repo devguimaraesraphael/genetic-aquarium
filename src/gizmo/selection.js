@@ -21,7 +21,7 @@ export function selectGizmo(gizmo) {
   gizmo._isSelected = true;
   if (gizmo.visionMesh) gizmo.visionMesh.visible = true;
   _setArrowColor(gizmo.spikeMesh, 0xffffff); // white arrow when selected
-  if (gizmo._seenTargetMarker) gizmo._seenTargetMarker.visible = true;
+  // marker visibility is managed by updateSeenTargetMarker each frame
 }
 
 export function deselectGizmo(gizmo) {

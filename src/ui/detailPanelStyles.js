@@ -93,6 +93,26 @@ export const PANEL_CSS = `
   color: #9fd0df;
   text-align: right;
 }
+#aq-wall-wrap {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.15);
+}
+#aq-wall-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ffcc00, #ff8800, #ff2222);
+  transition: width 0.12s linear;
+}
+#aq-wall-label {
+  margin-top: 4px;
+  font-size: 10px;
+  color: #9fd0df;
+  text-align: right;
+}
 #aq-nn-section {
   margin-top: 8px;
   border-top: 1px solid rgba(74,241,242,0.18);

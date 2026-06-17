@@ -40,7 +40,8 @@ describe("Gizmo Live Rendering", () => {
       gizmos.push(new Gizmo(scene, CONFIG));
     }
 
-    expect(scene.children.length).toBe(5);
+    // Each gizmo adds group + seenTargetMarker = 2 children per gizmo
+    expect(scene.children.length).toBe(10);
     gizmos.forEach((g) => {
       expect(g.isDead).toBe(false);
       expect(scene.children).toContain(g.group);

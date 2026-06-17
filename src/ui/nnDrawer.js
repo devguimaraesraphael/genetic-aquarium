@@ -8,18 +8,18 @@ import { actColor, edgeColor } from "./nnColors.js";
 import { drawEdges, drawNodes } from "./nnCanvas.js";
 
 export const INPUT_LABELS = [
-  "c_food",
-  "c_herb",
-  "c_carn",
-  "c_dist",
-  "c_ang",
-  "n_food",
-  "n_herb",
-  "n_carn",
-  "avg_d",
-  "starv",
-  "wall",
-  "bias",
+  "c_food", // [0]  closest entity is food (0/1)
+  "c_herb", // [1]  closest entity is herbivore (0/1)
+  "c_carn", // [2]  closest entity is carnivore (0/1)
+  "c_dist_x", // [3]  X-distance to closest entity (1=nearby, 0=far/none)
+  "c_dist_y", // [4]  Y-distance to closest entity (1=nearby, 0=far/none)
+  "n_food", // [5]  food count in vision (0-1)
+  "n_herb", // [6]  herbivore count in vision (0-1)
+  "n_carn", // [7]  carnivore count in vision (0-1)
+  "avg_d", // [8]  avg distance of visible entities (0-1)
+  "starv", // [9]  starvation level (0=full, 1=dying)
+  "wall", // [10] wall proximity (0=centre, 1=wall)
+  "bias", // [11] always 1.0
 ];
 export const OUTPUT_LABELS = ["ax", "ay", "eat"];
 

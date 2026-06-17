@@ -56,6 +56,19 @@
   - `eatDecision` (output[2]): sigmoid → [0, 1], threshold at 0.5 determines if gizmo eats.
 - **All outputs must ALWAYS be in [0, 1]** — never negative or exceeding 1.
 - Fallback on NN failure: [0.5, 0.5, 0.5] (no acceleration, no eat).
+- **Input layout** (all values normalised to [0, 1]):
+  - `[0]  c_food` — 1 if nearest visible entity is food, else 0 (one-hot with [1,2])
+  - `[1]  c_herb` — 1 if nearest visible entity is herbivore, else 0
+  - `[2]  c_carn` — 1 if nearest visible entity is carnivore, else 0
+  - `[3]  c_dist` — normalised distance to nearest entity (0=nearby, 1=at vision edge / none)
+  - `[4]  c_ang` — angle to nearest entity normalised [0,1] (0.5 = straight ahead)
+  - `[5]  n_food` — count of food items in vision field, normalised 0-1
+  - `[6]  n_herb` — count of herbivores in vision field, normalised 0-1
+  - `[7]  n_carn` — count of carnivores in vision field, normalised 0-1
+  - `[8]  avg_d` — average distance of all visible entities, normalised 0-1
+  - `[9]  starv` — starvation level (0=just ate, 1=about to die)
+  - `[10] wall` — proximity to nearest wall (0=centre, 1=against wall)
+  - `[11] bias` — always 1.0
 - **Critical rule**: If `nnHiddenSize` changes during simulation, ALL gizmos must be respawned with new NN architecture, Hall of Fame must be reset, and all saved champion genes must be cleared (structure changes invalidate all trained weights).
 - `clone()` must be deep copy (mutating clone must not mutate source).
 - `crossover()` must preserve dimensions.
