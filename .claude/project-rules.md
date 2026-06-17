@@ -1,5 +1,9 @@
 # Genetic Aquarium Project Rules
 
+## file sizes
+
+- nao permita que arquivos tenham mais de 200 linhas, separe as funcinalidades em modulos menores
+
 ## Mandatory checks after each modification
 
 - Run `npm test` and ensure all tests pass.
@@ -9,9 +13,9 @@
 ## Visual design rules
 
 - **Body**: Simple circle geometry (2D)
-- **Color**: 
-  - Herbivore body: Green (#00ff00), yellow spike (#ffff00)
-  - Carnivore body: Red (#ff0000), red spike (#ff0000)
+- **Color**:
+  - Herbivore yellow spike (#ffff00)
+  - Carnivore red spike (#ff0000)
 - **Direction indicator (spike)**:
   - Herbivore: Arredondado (smooth, rounded)
   - Carnivore: Fino e pontudo (thin, sharp V-shape)

@@ -1,29 +1,7 @@
-import * as THREE from "three";
-import { IDENTITY } from "./Identity.js";
+import { IDENTITY, IDENTITY_FOOD } from "./Identity.js";
+import { FOOD_MAX, createFoodMeshes, renderFoodInstances, FOOD_PALETTE } from "./food/foodRenderer.js";
 
-export const FOOD_MAX = 2000;
-
-// ── Shared 3D geometries ──────────────────────────────────────────────────────
-const _GEOS = (() => {
-  const tetra = new THREE.TetrahedronGeometry(1, 0);
-  const octa = new THREE.OctahedronGeometry(1, 0);
-  const icosa = new THREE.IcosahedronGeometry(1, 0);
-  return [tetra, octa, icosa];
-})();
-
-// ── Color palette – bioluminescent greens/teals ───────────────────────────────
-const _PALETTE = [
-  new THREE.Color(0x00ff66),
-  new THREE.Color(0x33dd55),
-  new THREE.Color(0x55ff33),
-  new THREE.Color(0x00cc44),
-  new THREE.Color(0x88ffaa),
-  new THREE.Color(0x22ee77),
-  new THREE.Color(0xaaff44),
-  new THREE.Color(0x00ff99),
-];
-
-const _dummy = new THREE.Object3D();
+export { FOOD_MAX };
 
 export class FoodManager {
   /**
@@ -34,25 +12,9 @@ export class FoodManager {
     this._scene = scene;
     this._config = config;
 
-    // Identity – all food is [0,0,0]
-    this.identity = IDENTITY.FOOD;
-
-    /** @type {Array<{x,y,size,rotation,shapeType,colorIdx}>} */
+    this.identity = IDENTITY_FOOD;
     this._foods = [];
-
-    // One InstancedMesh per shape type, pre-allocated for FOOD_MAX instances.
-    this._meshes = _GEOS.map((geo) => {
-      const mesh = new THREE.InstancedMesh(
-        geo,
-        new THREE.MeshBasicMaterial(),
-        FOOD_MAX,
-      );
-      mesh.count = 0;
-      mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-      scene.add(mesh);
-      return mesh;
-    });
-
+    this._meshes = createFoodMeshes(scene);
     this._seedInitial();
   }
 
@@ -104,7 +66,7 @@ export class FoodManager {
       size: startSize + Math.random() * startSize * 0.5,
       rotation: Math.random() * Math.PI * 2,
       shapeType: Math.floor(Math.random() * 3),
-      colorIdx: Math.floor(Math.random() * _PALETTE.length),
+      colorIdx: Math.floor(Math.random() * FOOD_PALETTE.length),
       cooldown: 0,
       waiting: false,
     });
@@ -199,30 +161,9 @@ export class FoodManager {
       if (this._foods.length < maxCount) this._addFood(p.x, p.y);
     }
 
-    // Remove eaten food (size set to near-zero by gizmo feeding)
+    // Remove eaten food
     this._foods = this._foods.filter((f) => f.size > 0.01);
-
-    // ── Rebuild InstancedMesh data ────────────────────────────────────────
-    const counts = [0, 0, 0];
-    for (const f of this._foods) {
-      const t = f.shapeType;
-      const i = counts[t]++;
-      f.rotation += dt * (0.8 + f.colorIdx * 0.15); // each food spins at its own rate
-      _dummy.position.set(f.x, f.y, 0.05);
-      _dummy.scale.setScalar(f.size);
-      _dummy.rotation.set(f.rotation * 0.7, f.rotation, f.rotation * 1.3); // 3D tumble
-      _dummy.updateMatrix();
-      this._meshes[t].setMatrixAt(i, _dummy.matrix);
-      this._meshes[t].setColorAt(i, _PALETTE[f.colorIdx]);
-    }
-
-    for (let t = 0; t < 3; t++) {
-      this._meshes[t].count = counts[t];
-      this._meshes[t].instanceMatrix.needsUpdate = true;
-      if (this._meshes[t].instanceColor) {
-        this._meshes[t].instanceColor.needsUpdate = true;
-      }
-    }
+    renderFoodInstances(this._meshes, this._foods, dt);
   }
 
   dispose() {

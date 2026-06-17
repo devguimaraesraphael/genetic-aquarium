@@ -1,5 +1,10 @@
-// ── Identity vectors ──────────────────────────────────────────────────────────
-// [food, herbivore, carnivore]
+// ── Identity string constants ─────────────────────────────────────────────────
+// Use these everywhere for identity comparisons (string === string is safe).
+export const IDENTITY_HERBIVORE = "herbivore";
+export const IDENTITY_CARNIVORE = "carnivore";
+export const IDENTITY_FOOD = "food";
+
+// Legacy vector format (kept for backward compatibility only – do not use for comparisons)
 export const IDENTITY = {
   FOOD: [1, 0, 0],
   HERBIVORE: [0, 1, 0],

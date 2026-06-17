@@ -50,6 +50,7 @@ export const CONFIG = {
   nnAccelScale: 300, // max acceleration magnitude (px/s²)
   nnMutationRate: 1.0, // probability per weight of being mutated
   nnMutationDelta: 0.01, // max fractional change per mutation (1%)
+  nnDisabled: false, // set to true in GUI to skip NN and use random outputs
 
   // ── Reproduction ──────────────────────────────────────────────────────
   scoreToReproduce: 5, // food/kills before a gizmo can clone

@@ -61,11 +61,32 @@ export class NeuralNetwork {
    *                          outputs[2] in [-1, 1] (tanh)
    */
   forward(inputs) {
+    // Guard: validate that weight matrices exist and have the expected shape.
+    // A mismatch (e.g. after crossover with wrong hiddenSize) must not crash.
+    if (
+      !Array.isArray(this.w1) || this.w1.length !== this.hiddenSize ||
+      !Array.isArray(this.w1[0]) || this.w1[0].length !== this.inputSize ||
+      !Array.isArray(this.w2) || this.w2.length !== this.outputSize ||
+      !Array.isArray(this.w2[0]) || this.w2[0].length !== this.hiddenSize
+    ) {
+      throw new Error(
+        `NN matrix shape mismatch: w1=${this.w1?.length}x${this.w1?.[0]?.length} ` +
+        `(expected ${this.hiddenSize}x${this.inputSize}), ` +
+        `w2=${this.w2?.length}x${this.w2?.[0]?.length} ` +
+        `(expected ${this.outputSize}x${this.hiddenSize})`
+      );
+    }
+
+    // Sanitize: any NaN or Infinity input becomes 0 to avoid NaN propagation
+    // (0 * Infinity = NaN in matrix multiply, which poisons the entire output)
+    const safeInputs = inputs.map((v) => (Number.isFinite(v) ? v : 0));
+
     // Hidden layer (tanh activation)
     const h = new Array(this.hiddenSize);
     for (let j = 0; j < this.hiddenSize; j++) {
       let sum = 0;
-      for (let i = 0; i < this.inputSize; i++) sum += this.w1[j][i] * inputs[i];
+      for (let i = 0; i < this.inputSize; i++)
+        sum += this.w1[j][i] * safeInputs[i];
       h[j] = Math.tanh(sum);
     }
     // Output layer (all sigmoid for [0, 1] range)
@@ -105,6 +126,10 @@ export class NeuralNetwork {
       for (let i = 0; i < row.length; i++) {
         if (Math.random() < rate) {
           row[i] += row[i] * (Math.random() * 2 - 1) * delta;
+          // Guard: if weight became NaN or Infinity, reset to small random value
+          if (!Number.isFinite(row[i])) {
+            row[i] = (Math.random() * 2 - 1) * 2;
+          }
         }
       }
     };
