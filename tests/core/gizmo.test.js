@@ -259,14 +259,14 @@ describe("3. Gizmo – Rendering in Three.js scene", () => {
     expect(g.bodyGroup.children).toContain(g.spikeMesh);
   });
 
-  it("herbivore body color is green", () => {
+  it("herbivore body color matches gizmo.color (lineage)", () => {
     const g = new Gizmo(scene, CONFIG, { identity: IDENTITY_HERBIVORE });
-    expect(g.bodyMesh.material.color.getHex()).toBe(0x00cc33);
+    expect(g.bodyMesh.material.color.getHex()).toBe(g.color.getHex());
   });
 
-  it("carnivore body color is red", () => {
+  it("carnivore body color matches gizmo.color (lineage)", () => {
     const g = new Gizmo(scene, CONFIG, { identity: IDENTITY_CARNIVORE });
-    expect(g.bodyMesh.material.color.getHex()).toBe(0xdd2200);
+    expect(g.bodyMesh.material.color.getHex()).toBe(g.color.getHex());
   });
 
   it("herbivore arrow color is yellow (0xffff00)", () => {

@@ -24,6 +24,7 @@ export function applyPhysics(gizmo, accelX, accelY, config, dt) {
   const deltaK = Math.min(k * dt, 1);
   const frictionFactor = Math.pow(config.l, dt);
 
+  // lerp() mutates in-place and returns this – do NOT use += with it
   gizmo.acceleration.lerp(new THREE.Vector2(accelX, accelY), deltaK);
   gizmo.velocity.lerp(gizmo.acceleration, deltaK);
   gizmo.velocity.multiplyScalar(frictionFactor);

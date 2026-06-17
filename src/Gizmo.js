@@ -42,14 +42,18 @@ export class Gizmo {
   // ── Mesh building ──────────────────────────────────────────────────────────
 
   _buildMesh() {
-    this.bodyMesh = buildBodyMesh(this.identity, this.genes.size);
+    // Body uses the gizmo's unique lineage color
+    this.bodyMesh = buildBodyMesh(this.identity, this.genes.size, this.color);
     this.spikeMesh = buildSpikeMesh(this.identity, this.genes.size);
     this.bodyGroup = new THREE.Group();
     this.bodyGroup.add(this.bodyMesh);
     this.bodyGroup.add(this.spikeMesh);
     this.group.add(this.bodyGroup);
     this.group.position.set(this.position.x, this.position.y, 0);
-    this.group.rotation.z = Math.atan2(this.direction.y, this.direction.x);
+    // Arrow points along local +Y; atan2 aligns local +X with velocity.
+    // Subtract π/2 so +Y (the arrow) aligns with the velocity direction.
+    this.group.rotation.z =
+      Math.atan2(this.direction.y, this.direction.x) - Math.PI / 2;
   }
 
   _buildVisionMesh() {
@@ -102,7 +106,8 @@ export class Gizmo {
     advancePosition(this, config, dt);
 
     this.group.position.set(this.position.x, this.position.y, 0);
-    this.group.rotation.z = Math.atan2(this.direction.y, this.direction.x);
+    this.group.rotation.z =
+      Math.atan2(this.direction.y, this.direction.x) - Math.PI / 2;
 
     if (eat && foodManager) tryEat(this, foodManager);
     if (this._isSelected) updateSeenTargetMarker(this, allGizmos);

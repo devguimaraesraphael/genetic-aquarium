@@ -18,11 +18,18 @@ const IDENTITY_HERBIVORE = "herbivore";
 
 // ── Body ────────────────────────────────────────────────────────────────────
 
-export function buildBodyMesh(identity, size) {
+/**
+ * @param {string} identity – "herbivore" | "carnivore"
+ * @param {number} size – gene size multiplier
+ * @param {THREE.Color} [color] – lineage color (uses identity fallback if omitted)
+ */
+export function buildBodyMesh(identity, size, color) {
   const r = GIZMO_BASE_RADIUS * size;
   const geo = new THREE.CircleGeometry(r, 16);
+  // Use the gizmo's unique lineage color when provided
+  const fallback = identity === IDENTITY_HERBIVORE ? 0x00cc33 : 0xdd2200;
   const mat = new THREE.MeshBasicMaterial({
-    color: identity === IDENTITY_HERBIVORE ? 0x00cc33 : 0xdd2200,
+    color: color ?? fallback,
   });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.position.z = 0.1;

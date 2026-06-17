@@ -26,14 +26,10 @@ export function initGizmoState(gizmo, scene, config, options) {
     (Math.random() * 2 - 1) * hw * 0.85,
     (Math.random() * 2 - 1) * hh * 0.85,
   );
-  gizmo.velocity = new THREE.Vector2(
-    (Math.random() * 2 - 1) * 2,
-    (Math.random() * 2 - 1) * 2,
-  );
-  gizmo.acceleration = new THREE.Vector2(
-    (Math.random() * 2 - 1) * 800,
-    (Math.random() * 2 - 1) * 800,
-  );
+  // Start with zero velocity and acceleration – gizmo begins still,
+  // NN will steer it into motion on the first frame.
+  gizmo.velocity = new THREE.Vector2(0, 0);
+  gizmo.acceleration = new THREE.Vector2(0, 0);
   gizmo.direction = new THREE.Vector2(0, 1);
 
   gizmo.genes = {
