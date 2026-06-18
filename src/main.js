@@ -6,6 +6,7 @@ import * as detailPanel from "./ui/detailPanel.js";
 import { gizmoList } from "./ui/gizmoList.js";
 import { createCameraSelectionRules } from "./ui/cameraSelectionRules.js";
 import { HallOfFame } from "./HallOfFame.js";
+import { updateHofPanel, updateGenOverlay } from "./ui/hofPanel.js";
 import { FoodManager } from "./Food.js";
 import { EffectsManager } from "./effects/EffectsManager.js";
 import {
@@ -82,13 +83,38 @@ const ctrl = new GizmoController(scene, config, {
 // ── Simulation state ──────────────────────────────────────────────────────────
 let simulationStarted = false;
 let paused = true; // start paused until user clicks Start
+let followBest = true;
+
+// ── Follow Best toggle ────────────────────────────────────────────────────────
+const _followBestBtn = document.getElementById("follow-best-btn");
+function _syncFollowBestBtn() {
+  if (!_followBestBtn) return;
+  _followBestBtn.classList.toggle("off", !followBest);
+  _followBestBtn.title = followBest
+    ? "Follow Best: ON — click to disable"
+    : "Follow Best: OFF — click to enable";
+}
+if (_followBestBtn) {
+  _followBestBtn.addEventListener("click", () => {
+    followBest = !followBest;
+    _syncFollowBestBtn();
+  });
+}
+_syncFollowBestBtn();
 
 function startSimulation() {
   if (simulationStarted) return;
   simulationStarted = true;
   paused = false;
+  hallOfFame.clear();
+  hofStats.herb = 0;
+  hofStats.carn = 0;
+  hofStats.herbGeneration = 1;
+  hofStats.carnGeneration = 1;
   foodManager = new FoodManager(scene, config);
   ctrl.createGizmos();
+  updateHofPanel(hallOfFame);
+  updateGenOverlay(hofStats);
   _updatePauseIndicator();
 }
 
@@ -261,5 +287,18 @@ const clock = new THREE.Clock();
     };
     simulationTick(dt, tickCtx);
   }
+
+  // ── Follow Best ─────────────────────────────────────────────────────────────
+  if (followBest && ctrl.gizmos.length > 0) {
+    let best = null;
+    for (const g of ctrl.gizmos) {
+      if (!g.isDead && (!best || g.score > best.score)) best = g;
+    }
+    if (best && best !== ctrl.selectedGizmo) {
+      ctrl.setSelectedGizmo(selectionRules.onAquariumSelect(best).fixed);
+      gizmoList.selectGizmo(best, false);
+    }
+  }
+
   composer.render();
 })();

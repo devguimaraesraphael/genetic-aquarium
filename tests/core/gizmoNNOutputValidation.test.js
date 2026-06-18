@@ -36,7 +36,7 @@ describe("Gizmo NN Output Validation", () => {
 
   it("should produce valid [0,1] outputs on first update", () => {
     const inputs = gizmo._nullInputs(config);
-    expect(inputs).toHaveLength(12);
+    expect(inputs).toHaveLength(14);
 
     const output = gizmo.nn.forward(inputs);
     expect(output).toHaveLength(3);

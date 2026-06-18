@@ -5,6 +5,7 @@
 
 import { Gizmo } from "../Gizmo.js";
 import { mutateColor } from "./colors.js";
+import { generateCloneId } from "./gizmoId.js";
 
 /**
  * Clone parent Gizmo into a child with slight mutations.
@@ -33,9 +34,10 @@ export function reproduce(parent, config, currentPopulation = 0) {
 
   const childNN = parent.nn.clone();
   childNN.mutate(config.nnMutationRate, config.nnMutationDelta);
-  const childColor = mutateColor(parent.color, 0.04);
+  const childColor = mutateColor(parent.color, 0.008);
 
   const child = new Gizmo(parent._scene, config, {
+    id: generateCloneId(parent.id),
     vision: childGenes.vision,
     visionRange: childGenes.visionRange,
     size: Math.max(config.sizeMin, Math.min(config.sizeMax, childGenes.size)),
@@ -47,6 +49,17 @@ export function reproduce(parent, config, currentPopulation = 0) {
 
   parent.reproductionEnergy = 0;
   parent.readyToReproduce = false;
+
+  // ── Debug: log clone birth ───────────────────────────────────────────────
+  const hP = "#" + parent.color.getHexString();
+  const hC = "#" + child.color.getHexString();
+  console.log(
+    `%c   %c ${parent.id}  →  %c   %c ${child.id}  [CLONE]`,
+    `background:${hP};padding:2px 6px;border-radius:3px`,
+    "",
+    `background:${hC};padding:2px 6px;border-radius:3px`,
+    "",
+  );
 
   return child;
 }

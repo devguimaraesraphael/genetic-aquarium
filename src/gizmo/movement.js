@@ -143,14 +143,18 @@ export function tryEat(gizmo, foodManager) {
  * Only called when gizmo is selected.
  */
 export function updateSeenTargetMarker(gizmo, allGizmos, foodManager) {
+  const visionRange =
+    (gizmo.genes && gizmo.genes.visionRange && gizmo.genes.visionRange[1]) ||
+    100;
   let nearestX = null;
   let nearestY = null;
   let minDist = Infinity;
 
-  // Check nearest other gizmo
+  // Check nearest other gizmo — must be within vision range
   for (const other of allGizmos) {
     if (other === gizmo || other.isDead) continue;
     const dist = gizmo.position.distanceTo(other.position);
+    if (dist > visionRange) continue;
     if (dist < minDist) {
       minDist = dist;
       nearestX = other.position.x;
@@ -158,13 +162,14 @@ export function updateSeenTargetMarker(gizmo, allGizmos, foodManager) {
     }
   }
 
-  // Check nearest food
+  // Check nearest food — must be within vision range
   if (foodManager && foodManager.foods) {
     for (const food of foodManager.foods) {
       if (food.size < 0.01) continue;
       const dx = food.x - gizmo.position.x;
       const dy = food.y - gizmo.position.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > visionRange) continue;
       if (dist < minDist) {
         minDist = dist;
         nearestX = food.x;

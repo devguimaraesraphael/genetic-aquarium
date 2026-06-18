@@ -10,15 +10,17 @@ const IDX = {
   C_FOOD: 0, // closest entity is food (0/1)
   C_HERB: 1, // closest entity is herbivore (0/1)
   C_CARN: 2, // closest entity is carnivore (0/1)
-  C_DIST_X: 3, // X-distance to closest (1=nearby, 0=far/none)
-  C_DIST_Y: 4, // Y-distance to closest (1=nearby, 0=far/none)
-  N_FOOD: 5, // food count in vision (0-1, clamps at 10)
-  N_HERB: 6, // herb count in vision (0-1, clamps at 10)
-  N_CARN: 7, // carn count in vision (0-1, clamps at 10)
-  AVG_D: 8, // avg distance (0-1)
-  STARV: 9, // starvation (0-1)
-  WALL: 10, // wall proximity (0=centre, 1=wall)
-  BIAS: 11, // always 1.0
+  C_PROX: 3, // proximity to nearest (1=close, 0=far/none)
+  C_ANGLE: 4, // heading alignment (1=front, 0=behind, 0=none)
+  C_LEFT: 5, // target is left or front (1/0)
+  C_RIGHT: 6, // target is right or front (1/0)
+  N_FOOD: 7, // food count in vision (0-1, clamps at 10)
+  N_HERB: 8, // herb count in vision (0-1, clamps at 10)
+  N_CARN: 9, // carn count in vision (0-1, clamps at 10)
+  AVG_D: 10, // avg distance (0-1)
+  STARV: 11, // starvation (0-1)
+  WALL: 12, // wall proximity (0=none, 1=wall)
+  BIAS: 13, // always 1.0
 };
 
 describe("Neural Network Input/Output Process", () => {
@@ -34,7 +36,7 @@ describe("Neural Network Input/Output Process", () => {
     scene.clear();
   });
 
-  it("NN should receive 12 inputs on each frame", () => {
+  it("NN should receive 14 inputs on each frame", () => {
     const gizmo = new Gizmo(scene, CONFIG);
     const cfg = { ...CONFIG };
     const allGizmos = [gizmo];
@@ -42,7 +44,7 @@ describe("Neural Network Input/Output Process", () => {
     gizmo.update(0.1, cfg, allGizmos, foodManager);
 
     expect(gizmo._lastInputs).toBeDefined();
-    expect(gizmo._lastInputs.length).toBe(12);
+    expect(gizmo._lastInputs.length).toBe(14);
     gizmo._lastInputs.forEach((input) => {
       expect(typeof input).toBe("number");
       expect(Number.isFinite(input)).toBe(true);
@@ -112,21 +114,52 @@ describe("Neural Network Input/Output Process", () => {
     expect(gizmo._lastInputs[IDX.WALL]).toBeLessThan(0.1);
   });
 
-  it("c_dist_x/c_dist_y are high (near 1) when food is directly alongside the gizmo", () => {
+  it("proximity and bearing inputs are 0 with no target; c_prox > 0 when target nearby", () => {
     const gizmo = new Gizmo(scene, CONFIG);
     gizmo.position.set(0, 0);
 
-    // Food at (5, 0): very close on X axis, same Y
+    // No target → proximity and bearing must all be 0
+    const noTarget = buildInputs(gizmo, { ...CONFIG }, [], { foods: [] });
+    expect(noTarget[IDX.C_PROX]).toBe(0);
+    expect(noTarget[IDX.C_ANGLE]).toBe(0);
+    expect(noTarget[IDX.C_LEFT]).toBe(0);
+    expect(noTarget[IDX.C_RIGHT]).toBe(0);
+
+    // Food nearby → c_prox > 0; c_angle/c_left/c_right are in valid ranges
     const fm = { foods: [{ x: 5, y: 0, size: 5 }] };
     const inputs = buildInputs(gizmo, { ...CONFIG }, [], fm);
-
     expect(inputs[IDX.C_FOOD]).toBe(1);
-    expect(inputs[IDX.C_HERB]).toBe(0);
-    expect(inputs[IDX.C_CARN]).toBe(0);
-    // X distance close → c_dist_x near 1; Y distance = 0 → c_dist_y = 1
-    expect(inputs[IDX.C_DIST_X]).toBeGreaterThan(0.8);
-    expect(inputs[IDX.C_DIST_Y]).toBe(1);
+    expect(inputs[IDX.C_PROX]).toBeGreaterThan(0);
     expect(inputs[IDX.N_FOOD]).toBeGreaterThan(0);
+    expect([0, 1]).toContain(inputs[IDX.C_LEFT]);
+    expect([0, 1]).toContain(inputs[IDX.C_RIGHT]);
+    expect(inputs[IDX.C_ANGLE]).toBeGreaterThanOrEqual(0);
+    expect(inputs[IDX.C_ANGLE]).toBeLessThanOrEqual(1);
+  });
+
+  it("c_prox is higher when target is closer", () => {
+    const gizmo = new Gizmo(scene, CONFIG);
+    gizmo.position.set(0, 0);
+
+    const visionRange = CONFIG.visionMax ?? 180;
+    const near = { foods: [{ x: 5, y: 0, size: 5 }] };
+    const far = { foods: [{ x: visionRange * 0.9, y: 0, size: 5 }] };
+
+    const nearInputs = buildInputs(gizmo, { ...CONFIG }, [], near);
+    const farInputs = buildInputs(gizmo, { ...CONFIG }, [], far);
+    expect(nearInputs[IDX.C_PROX]).toBeGreaterThan(farInputs[IDX.C_PROX]);
+  });
+
+  it("c_left=1 c_right=1 when target is directly in front", () => {
+    const gizmo = new Gizmo(scene, CONFIG);
+    gizmo.position.set(0, 0);
+    // Gizmo direction starts as (0, 1) i.e. pointing up
+    // Target directly above → cross = 0, dot = 1
+    const fm = { foods: [{ x: 0, y: 50, size: 5 }] };
+    const inputs = buildInputs(gizmo, { ...CONFIG }, [], fm);
+    expect(inputs[IDX.C_ANGLE]).toBeCloseTo(1, 1);
+    expect(inputs[IDX.C_LEFT]).toBe(1);
+    expect(inputs[IDX.C_RIGHT]).toBe(1);
   });
 
   it("NN should produce 3 valid outputs in [0,1]", () => {

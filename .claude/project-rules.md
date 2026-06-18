@@ -46,7 +46,7 @@
 
 ## Neural network rules
 
-- Architecture for gizmos must remain `12 inputs -> hidden -> 3 outputs`.
+- Architecture for gizmos must remain `14 inputs -> hidden -> 3 outputs`.
 - Activation functions:
   - **Hidden layer neurons**: use tanh activation (range [-1, 1]).
   - **Output layer neurons**: all use sigmoid activation (range [0, 1]).
@@ -60,15 +60,18 @@
   - `[0]  c_food` — 1 if nearest visible entity is food, else 0 (one-hot with [1,2])
   - `[1]  c_herb` — 1 if nearest visible entity is herbivore, else 0
   - `[2]  c_carn` — 1 if nearest visible entity is carnivore, else 0
-  - `[3]  c_dist` — normalised distance to nearest entity (0=nearby, 1=at vision edge / none)
-  - `[4]  c_ang` — angle to nearest entity normalised [0,1] (0.5 = straight ahead)
-  - `[5]  n_food` — count of food items in vision field, normalised 0-1
-  - `[6]  n_herb` — count of herbivores in vision field, normalised 0-1
-  - `[7]  n_carn` — count of carnivores in vision field, normalised 0-1
-  - `[8]  avg_d` — average distance of all visible entities, normalised 0-1
-  - `[9]  starv` — starvation level (0=just ate, 1=about to die)
-  - `[10] wall` — proximity to nearest wall (0=centre, 1=against wall)
-  - `[11] bias` — always 1.0
+  - `[3]  c_prox` — proximity to nearest entity: `1 - dist/visionRange`; **0 when no target**
+  - `[4]  c_angle` — heading alignment: `(dot+1)/2` where dot = facing·target_dir; 1=front, 0=behind; **0 when no target**
+  - `[5]  c_left` — 1 if target is to the left or directly ahead (cross≥0); 0 otherwise; **0 when no target**
+  - `[6]  c_right` — 1 if target is to the right or directly ahead (cross≤0); 0 otherwise; **0 when no target**
+  - When totally in front: `[c_prox, 1, 1, 1]`; when totally to left: `[c_prox, 0.5, 1, 0]`; when totally to right: `[c_prox, 0.5, 0, 1]`
+  - `[7]  n_food` — count of food items in vision field, normalised 0-1 (0 foods=0, >10=1)
+  - `[8]  n_herb` — count of herbivores in vision field, normalised 0-1
+  - `[9]  n_carn` — count of carnivores in vision field, normalised 0-1
+  - `[10] avg_d` — average distance of all visible entities, normalised 0-1
+  - `[11] starv` — starvation level (0=just ate, 1=about to die)
+  - `[12] wall` — wall proximity within vision range: 0 if outside vision, 1 if touching
+  - `[13] bias` — always 1.0
 - **Critical rule**: If `nnHiddenSize` changes during simulation, ALL gizmos must be respawned with new NN architecture, Hall of Fame must be reset, and all saved champion genes must be cleared (structure changes invalidate all trained weights).
 - `clone()` must be deep copy (mutating clone must not mutate source).
 - `crossover()` must preserve dimensions.
@@ -98,6 +101,7 @@
 - Vision circle must be disabled immediately on gizmo deselection.
 - No global vision-circle toggle should exist.
 - When a gizmo is selected by click, the nearest item currently fed as NN input (the item being seen) must receive a red circle highlight around it.
+- Only entities **within the gizmo's vision range** count as NN inputs or as the red-circle target; entities beyond the vision circle are ignored entirely.
 
 ## Selected gizmo panel behavior
 

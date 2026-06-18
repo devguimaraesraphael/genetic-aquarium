@@ -6,8 +6,10 @@
 import { Gizmo } from "../Gizmo.js";
 import { IDENTITY_HERBIVORE, IDENTITY_CARNIVORE } from "../Identity.js";
 import * as detailPanel from "../ui/detailPanel.js";
+import { generateCrossoverId, resetIdRegistry } from "../gizmo/gizmoId.js";
 
 const RANDOM_RATE = 0.2; // 20% of each new generation is fully random
+const HOF_WARMUP_GENS = 5; // first N generations are always fully random (no HoF crossover)
 
 export class GizmoController {
   constructor(
@@ -29,6 +31,7 @@ export class GizmoController {
 
   createGizmos() {
     this.gizmos.forEach((g) => g.dispose());
+    resetIdRegistry(); // fresh surname pool for each new simulation
     const n = this.config.gizmoCount ?? 20;
     const carnRatio = this.config.carnivoreRatio ?? 0.1;
     const herbCount = Math.round(n * (1 - carnRatio)) || n;
@@ -46,6 +49,32 @@ export class GizmoController {
     this.selectedGizmo = null;
     detailPanel.hide();
     this.updateGizmoList();
+
+    // ── Debug: log first generation by type ─────────────────────────────────
+    const herbs = this.gizmos.filter((g) => g.identity === IDENTITY_HERBIVORE);
+    const carns = this.gizmos.filter((g) => g.identity === IDENTITY_CARNIVORE);
+    console.group("%c[GEN 0] First generation", "color:#0ff;font-weight:bold");
+    console.group(`%c🌿 Herbivores (${herbs.length})`, "color:#ffff00");
+    herbs.forEach((g) => {
+      const hex = "#" + g.color.getHexString();
+      console.log(
+        `%c   %c ${g.id}`,
+        `background:${hex};padding:2px 8px;border-radius:3px`,
+        "",
+      );
+    });
+    console.groupEnd();
+    console.group(`%c🔴 Carnivores (${carns.length})`, "color:#ff4444");
+    carns.forEach((g) => {
+      const hex = "#" + g.color.getHexString();
+      console.log(
+        `%c   %c ${g.id}`,
+        `background:${hex};padding:2px 8px;border-radius:3px`,
+        "",
+      );
+    });
+    console.groupEnd();
+    console.groupEnd();
   }
 
   spawnGeneration(hofSlot, count, isCarnivore) {
@@ -53,10 +82,14 @@ export class GizmoController {
     const id = isCarnivore ? IDENTITY_CARNIVORE : IDENTITY_HERBIVORE;
     const mutRate = this.config.nnMutationRate ?? 1.0;
     const mutDelta = this.config.nnMutationDelta ?? 0.01;
+    const currentGen = isCarnivore
+      ? (this.hofStats.carnGeneration ?? 1)
+      : (this.hofStats.herbGeneration ?? 1);
+    const inWarmup = currentGen <= HOF_WARMUP_GENS;
 
     for (let i = 0; i < count; i++) {
       if (this.gizmos.length >= cap) break; // hard cap – never exceed
-      if (Math.random() < RANDOM_RATE) {
+      if (inWarmup || Math.random() < RANDOM_RATE) {
         this.gizmos.push(new Gizmo(this.scene, this.config, { identity: id }));
         continue;
       }
@@ -90,6 +123,13 @@ export class GizmoController {
         identity: id,
         lineageHue: hue,
         sizeOverride: crossedSize,
+        id:
+          pA && pB
+            ? generateCrossoverId(
+                pA.id ?? "0AA-0000-0000",
+                pB.id ?? "0BB-0000-0000",
+              )
+            : undefined,
       });
 
       if (crossedVision !== undefined) {
@@ -98,7 +138,7 @@ export class GizmoController {
 
       if (pA && pB) {
         const expHidden = this.config.nnHiddenSize ?? 6;
-        const expInput = 12;
+        const expInput = 14;
         const expOutput = 3;
         const shapeOk = (snap) =>
           snap?.nnW1?.length === expHidden &&
@@ -116,6 +156,31 @@ export class GizmoController {
           g.nn.mutate(mutRate, mutDelta);
         }
         // If shapes don't match current config, g.nn keeps freshly initialized random weights
+      }
+
+      // ── Debug: log crossover birth ──────────────────────────────────────────
+      if (pA && pB) {
+        const hA = pA.colorHex ?? "#888888";
+        const hB = pB.colorHex ?? "#888888";
+        const hC = "#" + g.color.getHexString();
+        console.group("%c[CROSSOVER]", "color:#ffaa00;font-weight:bold");
+        console.log(
+          `%c   %c parent1  ${pA.id}`,
+          `background:${hA};padding:2px 6px;border-radius:3px`,
+          "",
+        );
+        console.log(
+          `%c   %c parent2  ${pB.id}`,
+          `background:${hB};padding:2px 6px;border-radius:3px`,
+          "",
+        );
+        console.log(
+          `%c   %c child    ${g.id}`,
+          `background:${hC};padding:2px 6px;border-radius:3px`,
+          "",
+        );
+        console.log("---");
+        console.groupEnd();
       }
 
       this.gizmos.push(g);

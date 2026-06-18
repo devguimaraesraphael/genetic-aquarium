@@ -5,18 +5,20 @@
 
 import * as THREE from "three";
 import { NeuralNetwork } from "../NeuralNetwork.js";
+import { generateInitialId } from "./gizmoId.js";
 
 const IDENTITY_HERBIVORE = "herbivore";
 const IDENTITY_CARNIVORE = "carnivore";
 
-// Auto-incrementing ID so every gizmo gets a stable, unique number
-let _nextId = 1;
+// Auto-incrementing numeric ID kept for internal use (array index, etc.)
+let _nextNumericId = 1;
 export function resetGizmoIdCounter() {
-  _nextId = 1;
+  _nextNumericId = 1;
 }
 
 export function initGizmoState(gizmo, scene, config, options) {
-  gizmo.id = _nextId++;
+  gizmo.numericId = _nextNumericId++;
+  gizmo.id = options.id ?? generateInitialId();
   gizmo._scene = scene;
   gizmo._config = config;
 
@@ -51,7 +53,7 @@ export function initGizmoState(gizmo, scene, config, options) {
     : new THREE.Color().setHSL(Math.random(), 0.75, 0.58);
   gizmo.lineageHue = options.lineageHue ?? gizmo.color.getHSL({}).h;
 
-  gizmo.nn = options.nn ?? new NeuralNetwork(12, config.nnHiddenSize, 3);
+  gizmo.nn = options.nn ?? new NeuralNetwork(14, config.nnHiddenSize, 3);
 
   gizmo.isDead = false;
   gizmo.age = 0;

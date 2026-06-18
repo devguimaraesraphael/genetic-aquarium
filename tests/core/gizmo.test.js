@@ -39,9 +39,9 @@ describe("1. Gizmo – Neural Network format on creation", () => {
     expect(g.nn).toBeInstanceOf(NeuralNetwork);
   });
 
-  it("nn has inputSize = 12", () => {
+  it("nn has inputSize = 14", () => {
     const g = new Gizmo(scene, CONFIG);
-    expect(g.nn.inputSize).toBe(12);
+    expect(g.nn.inputSize).toBe(14);
   });
 
   it("nn hiddenSize matches config.nnHiddenSize", () => {
@@ -58,7 +58,7 @@ describe("1. Gizmo – Neural Network format on creation", () => {
     const g = new Gizmo(scene, CONFIG);
     expect(g.nn.w1.length).toBe(CONFIG.nnHiddenSize);
     g.nn.w1.forEach((row) => {
-      expect(row.length).toBe(12);
+      expect(row.length).toBe(14);
     });
   });
 
@@ -191,7 +191,7 @@ describe("2. Neural Network – format, propagation, output", () => {
         influentialCount++;
       }
     }
-    // At least 6 of 12 inputs must influence the output
+    // At least 6 of 14 inputs must influence the output
     expect(influentialCount).toBeGreaterThanOrEqual(6);
   });
 
@@ -207,11 +207,11 @@ describe("2. Neural Network – format, propagation, output", () => {
     out.forEach((v) => expect(Number.isFinite(v)).toBe(true));
   });
 
-  it("Gizmo._nullInputs returns 12-element all-zero array", () => {
+  it("Gizmo._nullInputs returns 14-element all-zero array", () => {
     const scene = new THREE.Scene();
     const g = new Gizmo(scene, CONFIG);
     const inputs = g._nullInputs(CONFIG);
-    expect(inputs.length).toBe(12);
+    expect(inputs.length).toBe(14);
     inputs.forEach((v) => expect(v).toBe(0));
   });
 });
@@ -346,10 +346,10 @@ describe("4. Gizmo – Receives and applies NN output", () => {
     });
   });
 
-  it("after update(), _lastInputs has 12 finite values", () => {
+  it("after update(), _lastInputs has 14 finite values", () => {
     const g = new Gizmo(scene, CONFIG);
     g.update(0.016, CONFIG, [g], NO_FOOD);
-    expect(g._lastInputs.length).toBe(12);
+    expect(g._lastInputs.length).toBe(14);
     g._lastInputs.forEach((v) => expect(Number.isFinite(v)).toBe(true));
   });
 

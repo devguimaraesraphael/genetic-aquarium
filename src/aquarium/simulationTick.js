@@ -6,6 +6,7 @@
 import { getRespawnPlan } from "../simulation/respawnRules.js";
 import { IDENTITY_HERBIVORE } from "../Identity.js";
 import * as detailPanel from "../ui/detailPanel.js";
+import { updateHofPanel, updateGenOverlay } from "../ui/hofPanel.js";
 
 /**
  * Run one simulation frame.
@@ -44,6 +45,7 @@ export function simulationTick(dt, ctx) {
           g.identity === IDENTITY_HERBIVORE ? "herbivores" : "carnivores";
         hofStats[slot === "herbivores" ? "herb" : "carn"] =
           hallOfFame[slot][0]?.score ?? 0;
+        updateHofPanel(hallOfFame);
       }
       if (g === ctrl.selectedGizmo) ctrl.clearSelection();
       g.dispose();
@@ -68,6 +70,7 @@ export function simulationTick(dt, ctx) {
       hofStats.carnGeneration = (hofStats.carnGeneration ?? 1) + 1;
       hofStats.herb = 0;
       hofStats.carn = 0;
+      updateGenOverlay(hofStats);
       if (nHerbs > 0) {
         ctrl.spawnGeneration(
           "herbivores",
@@ -95,6 +98,7 @@ export function simulationTick(dt, ctx) {
       );
       hofStats.herbGeneration = (hofStats.herbGeneration ?? 1) + 1;
       hofStats.herb = 0;
+      updateGenOverlay(hofStats);
       foodManager.reset();
       ctrl.spawnGeneration("herbivores", canSpawn, false);
     }
@@ -105,6 +109,7 @@ export function simulationTick(dt, ctx) {
       );
       hofStats.carnGeneration = (hofStats.carnGeneration ?? 1) + 1;
       hofStats.carn = 0;
+      updateGenOverlay(hofStats);
       ctrl.spawnGeneration("carnivores", canSpawn, true);
     }
   }

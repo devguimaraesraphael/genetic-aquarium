@@ -9,6 +9,7 @@ const TOP_N = 5;
 
 function _snapshot(gizmo) {
   return {
+    id: gizmo.id,
     score: gizmo.score,
     genes: {
       size: gizmo.genes.size,
@@ -18,7 +19,7 @@ function _snapshot(gizmo) {
     nnW1: gizmo.nn.w1.map((row) => [...row]),
     nnW2: gizmo.nn.w2.map((row) => [...row]),
     identity: [...gizmo.identity],
-    colorHex: gizmo.colorHex,
+    colorHex: gizmo.color ? "#" + gizmo.color.getHexString() : "#888888",
   };
 }
 

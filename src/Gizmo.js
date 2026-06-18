@@ -69,7 +69,7 @@ export class Gizmo {
   // ── NN helpers ─────────────────────────────────────────────────────────────
 
   _nullInputs() {
-    return new Array(12).fill(0);
+    return new Array(14).fill(0);
   }
   _buildInputs(config, allGizmos, foodManager) {
     return buildInputs(this, config, allGizmos, foodManager);
@@ -82,13 +82,13 @@ export class Gizmo {
     const expHidden = config.nnHiddenSize ?? 6;
     const shapeValid =
       this.nn &&
-      this.nn.inputSize === 12 &&
+      this.nn.inputSize === 14 &&
       this.nn.hiddenSize === expHidden &&
       this.nn.outputSize === 3 &&
       Array.isArray(this.nn.w1) &&
       this.nn.w1.length === expHidden &&
       Array.isArray(this.nn.w1[0]) &&
-      this.nn.w1[0].length === 12 &&
+      this.nn.w1[0].length === 14 &&
       Array.isArray(this.nn.w2) &&
       this.nn.w2.length === 3 &&
       Array.isArray(this.nn.w2[0]) &&
@@ -99,7 +99,7 @@ export class Gizmo {
         `[Gizmo #${this.id}] NN shape invalid (hidden=${this.nn?.hiddenSize}, ` +
           `expected=${expHidden}) – rebuilding`,
       );
-      this.nn = new NeuralNetwork(12, expHidden, 3);
+      this.nn = new NeuralNetwork(14, expHidden, 3);
     }
 
     const r = inferNN(this.nn, inputs, this.id, config);
