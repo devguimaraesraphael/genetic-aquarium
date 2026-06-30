@@ -74,14 +74,47 @@
   - `[13] bias` — always 1.0
 - **Critical rule**: If `nnHiddenSize` changes during simulation, ALL gizmos must be respawned with new NN architecture, Hall of Fame must be reset, and all saved champion genes must be cleared (structure changes invalidate all trained weights).
 - `clone()` must be deep copy (mutating clone must not mutate source).
-- `crossover()` must preserve dimensions.
+- Mutacao: Gaussiana aditiva `weight += N(0, sigma)`. Regime creep: sigma=delta (padrao 0.05). Regime jump: sigma=0.3 com 5% de probabilidade. Pesos clampeados em [-4, 4].
+- Crossover: por linha inteira (neuronio completo) — cada linha de w1 e w2 vem inteira de um dos dois pais. Nunca mistura pesos individuais de pais diferentes.
+- **Reproducao exclusivamente por crossover do HoF** — nenhum mecanismo de clone deve ser reintroduzido no `simulationTick`. Gizmos nao acumulam `reproductionEnergy` nem expoem `readyToReproduce`.
 
-## Hall of Fame rules
+vamos por partes ataulizando arquivo por arquivo
 
-- Hall of Fame must keep top scores sorted descending.
-- Hall of Fame size per class must stay capped (top N).
-- `bestChampion()` must pick highest score across classes.
-- `pickParents()` must return valid parents when class data exists.
+regras
+
+## Hall of Fame / DNA persistence
+
+The Hall of Fame must persist DNA separately by identity type:
+
+- Herbivores
+- Carnivores
+
+For each identity type, exactly three DNA groups must be maintained:
+
+1. Historical champions:
+   - Keep the top 3 best individuals across all generations.
+
+2. Latest generation champions:
+   - Keep the top 3 best individuals from the latest completed/observed generation of that identity type.
+
+3. Current generation champions:
+   - Keep the top 3 best individuals from the currently active observed generation of that identity type.
+
+Therefore, each identity type may expose up to 9 persisted DNA snapshots:
+
+- 3 all-time best DNA snapshots.
+- 3 latest-generation best DNA snapshots.
+- 3 current-generation best DNA snapshots.
+
+The Hall of Fame must remain separated between Herbivores and Carnivores.
+
+Existing features must not break:
+
+- `pickParents()` must remain compatible with the existing `spawnGeneration()` flow.
+- `pickParents()` must be able to use the historical and latest-generation DNA pools.
+- The Hall of Fame panel must render three groups per identity.
+- Respawn and crossover logic must continue to work with existing `spawnGeneration()` calls.
+- Existing code that reads `herbivoresBest` and `carnivoresBest` as historical champions must remain compatible.
 
 ## Test organization
 

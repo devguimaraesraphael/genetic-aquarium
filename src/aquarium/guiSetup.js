@@ -184,7 +184,10 @@ export function setupGui(gui, config, deps) {
   gui.add(
     {
       "⭐ Restaurar Melhores Genes": () => {
-        if (!hallOfFame.herbivores.length && !hallOfFame.carnivores.length) {
+        if (
+          !hallOfFame.herbivoresBest.length &&
+          !hallOfFame.carnivoresBest.length
+        ) {
           alert("Nenhum gene campeão registrado ainda.");
           return;
         }
@@ -201,12 +204,12 @@ export function setupGui(gui, config, deps) {
         const carnRatio = config.carnivoreRatio ?? 0.1;
         const nCarns = Math.max(0, Math.round(total * carnRatio));
         spawnGeneration(
-          hallOfFame.herbivores.length > 0 ? "herbivores" : "carnivores",
+          hallOfFame.herbivoresBest.length > 0 ? "herbivores" : "carnivores",
           total - nCarns,
           false,
         );
         spawnGeneration(
-          hallOfFame.carnivores.length > 0 ? "carnivores" : "herbivores",
+          hallOfFame.carnivoresBest.length > 0 ? "carnivores" : "herbivores",
           nCarns,
           true,
         );

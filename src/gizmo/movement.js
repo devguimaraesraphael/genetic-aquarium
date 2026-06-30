@@ -117,7 +117,7 @@ export function advancePosition(gizmo, config, dt) {
 
 /**
  * Attempt to eat nearby food items.
- * Mutates gizmo.starvationCounter, gizmo.score, gizmo.reproductionEnergy, gizmo.readyToReproduce.
+ * Mutates gizmo.starvationCounter, gizmo.score.
  * Marks eaten food with size=0 for removal by FoodManager.update().
  */
 export function tryEat(gizmo, foodManager) {

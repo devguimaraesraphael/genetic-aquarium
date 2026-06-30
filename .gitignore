@@ -1,1 +1,6 @@
 node_modules/*
+
+# Claude - arquivos pessoais (não commitar)
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/projects/

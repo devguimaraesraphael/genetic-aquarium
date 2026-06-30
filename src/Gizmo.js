@@ -136,7 +136,7 @@ export class Gizmo {
     this.group.rotation.z =
       Math.atan2(this.direction.y, this.direction.x) - Math.PI / 2;
 
-    if (eat && foodManager) tryEat(this, foodManager);
+    if (eat) tryEat(this, foodManager, allGizmos);
     if (this._isSelected) updateSeenTargetMarker(this, allGizmos, foodManager);
   }
 
