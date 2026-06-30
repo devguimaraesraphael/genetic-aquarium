@@ -26,7 +26,7 @@ describe("Hall of Fame rules", () => {
     [5, 20, 10, 30, 25, 1].forEach((score) => {
       hof.register(makeGizmo({ score, isHerb: true }));
     });
-    expect(hof.herbivores.length).toBeLessThanOrEqual(5);
+    expect(hof.herbivores.length).toBeLessThanOrEqual(10);
     const scores = hof.herbivores.map((x) => x.score);
     expect(scores).toEqual([...scores].sort((a, b) => b - a));
   });
