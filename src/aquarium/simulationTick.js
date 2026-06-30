@@ -114,24 +114,6 @@ export function simulationTick(dt, ctx) {
     }
   }
 
-  // Spawn offspring – enforce population cap BEFORE creating any child
-  const maxGizmos = config.gizmoCount ?? 20;
-  const offspring = [];
-  ctrl.gizmos.forEach((g) => {
-    const atCap = ctrl.gizmos.length + offspring.length >= maxGizmos;
-    if (g._pendingOffspring && !atCap) {
-      offspring.push(g.spawnClone(ctrl.scene));
-    } else if (g._pendingOffspring) {
-      // cap reached – reset flag so the gizmo doesn't accumulate energy
-      g._pendingOffspring = false;
-      g.readyToReproduce = false;
-    }
-  });
-  ctrl.gizmos.push(...offspring);
-  offspring.forEach((g) =>
-    effects.birth(g.position.x, g.position.y, g.bodyRadius),
-  );
-
   // Champion stars
   let bestHerb = null,
     bestCarn = null;

@@ -67,6 +67,4 @@ export function initGizmoState(gizmo, scene, config, options) {
   gizmo._lastInputs = new Array(12).fill(0);
   gizmo._lastOutputs = [0.5, 0.5, 0.5];
 
-  gizmo.readyToReproduce = false;
-  gizmo.reproductionEnergy = 0;
 }

@@ -4,6 +4,7 @@
  */
 
 import { Gizmo } from "../Gizmo.js";
+import { NeuralNetwork } from "../NeuralNetwork.js";
 import { IDENTITY_HERBIVORE, IDENTITY_CARNIVORE } from "../Identity.js";
 import * as detailPanel from "../ui/detailPanel.js";
 import { generateCrossoverId, resetIdRegistry } from "../gizmo/gizmoId.js";
@@ -147,12 +148,14 @@ export class GizmoController {
           snap?.nnW2?.[0]?.length === expHidden;
 
         if (shapeOk(pA) && shapeOk(pB)) {
-          g.nn.w1 = pA.nnW1.map((row, j) =>
-            row.map((w, k) => (Math.random() < 0.5 ? w : pB.nnW1[j][k])),
-          );
-          g.nn.w2 = pA.nnW2.map((row, j) =>
-            row.map((w, k) => (Math.random() < 0.5 ? w : pB.nnW2[j][k])),
-          );
+          // Reconstruct temporary NNs from snapshots so we can use crossover()
+          const nnA = new NeuralNetwork(expInput, expHidden, expOutput);
+          nnA.w1 = pA.nnW1.map((row) => [...row]);
+          nnA.w2 = pA.nnW2.map((row) => [...row]);
+          const nnB = new NeuralNetwork(expInput, expHidden, expOutput);
+          nnB.w1 = pB.nnW1.map((row) => [...row]);
+          nnB.w2 = pB.nnW2.map((row) => [...row]);
+          g.nn = nnA.crossover(nnB);
           g.nn.mutate(mutRate, mutDelta);
         }
         // If shapes don't match current config, g.nn keeps freshly initialized random weights

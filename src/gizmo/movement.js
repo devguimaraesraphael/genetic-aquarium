@@ -130,9 +130,7 @@ export function tryEat(gizmo, foodManager) {
     if (dist < eatRadius) {
       gizmo.starvationCounter = 0;
       gizmo.score += 10;
-      gizmo.reproductionEnergy += 5;
       food.size = 0;
-      if (gizmo.reproductionEnergy >= 50) gizmo.readyToReproduce = true;
     }
   }
 }

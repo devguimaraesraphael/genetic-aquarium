@@ -5,7 +5,7 @@
  */
 
 const HOF_KEY = "genetic-aquarium-hof";
-const TOP_N = 5;
+const TOP_N = 10;
 
 function _snapshot(gizmo) {
   return {
@@ -18,7 +18,7 @@ function _snapshot(gizmo) {
     },
     nnW1: gizmo.nn.w1.map((row) => [...row]),
     nnW2: gizmo.nn.w2.map((row) => [...row]),
-    identity: [...gizmo.identity],
+    identity: gizmo.identity,
     colorHex: gizmo.color ? "#" + gizmo.color.getHexString() : "#888888",
   };
 }
@@ -114,23 +114,48 @@ export class HallOfFame {
     return h.score >= c.score ? h : c;
   }
 
+  /** Best score in the given slot (used by simulationTick for UI stats). */
+  getBestScore(slot) {
+    return (this[slot] ?? [])[0]?.score ?? 0;
+  }
+
   /**
-   * Pick 2 distinct random parents from the available list.
-   * Each individual has equal probability — maximises variety.
+   * Returns a copy of the breeding pool for the given slot.
+   * Used by simulationTick to check if HoF has data before spawning.
+   */
+  getBreedingPool(slot) {
+    return [...(this[slot] ?? [])];
+  }
+
+  /**
+   * No-op in the flat-list model — kept for API compatibility with simulationTick.
+   * The flat list is always up-to-date; no generation finalization is needed.
+   * @returns {boolean} always false
+   */
+  finalizeGeneration(_slot) {
+    return false;
+  }
+
+  /**
+   * Pick 2 parents from the breeding pool using tournament selection.
+   * Draws `tournamentSize` candidates at random (with replacement), sorts
+   * them by score descending, then returns the top two — biasing towards
+   * higher-scoring individuals while preserving genetic variety.
    * @param {'herbivores'|'carnivores'} slot
+   * @param {number} [tournamentSize=4] number of candidates to draw
    * @returns {[object|null, object|null]}
    */
-  pickParents(slot) {
-    const list = this[slot];
+  pickParents(slot, tournamentSize = 4) {
+    const list = this[slot] ?? [];
+
     if (list.length === 0) return [null, null];
     if (list.length === 1) return [list[0], list[0]];
 
-    // Shuffle-based pick: draw 2 without replacement
-    const idxA = Math.floor(Math.random() * list.length);
-    let idxB;
-    do {
-      idxB = Math.floor(Math.random() * list.length);
-    } while (idxB === idxA);
-    return [list[idxA], list[idxB]];
+    const k = Math.min(tournamentSize, list.length);
+    const sample = Array.from({ length: k },
+      () => list[Math.floor(Math.random() * list.length)]);
+    sample.sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+
+    return [sample[0], sample[1] ?? sample[0]];
   }
 }

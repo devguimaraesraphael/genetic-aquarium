@@ -344,19 +344,20 @@ describe("NeuralNetwork – crossover", () => {
     child.w2.forEach((row) => expect(row.length).toBe(6));
   });
 
-  it("child weights are always from exactly one of the two parents", () => {
+  it("child rows come entirely from one parent (row-level crossover)", () => {
     const a = new NeuralNetwork(12, 6, 3);
     const b = new NeuralNetwork(12, 6, 3);
     const child = a.crossover(b);
+    // Row-level crossover: each entire row comes from one parent
     child.w1.forEach((row, j) => {
-      row.forEach((w, i) => {
-        expect(w === a.w1[j][i] || w === b.w1[j][i]).toBe(true);
-      });
+      const fromA = row.every((w, i) => w === a.w1[j][i]);
+      const fromB = row.every((w, i) => w === b.w1[j][i]);
+      expect(fromA || fromB).toBe(true);
     });
     child.w2.forEach((row, k) => {
-      row.forEach((w, j) => {
-        expect(w === a.w2[k][j] || w === b.w2[k][j]).toBe(true);
-      });
+      const fromA = row.every((w, j) => w === a.w2[k][j]);
+      const fromB = row.every((w, j) => w === b.w2[k][j]);
+      expect(fromA || fromB).toBe(true);
     });
   });
 

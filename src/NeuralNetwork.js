@@ -120,19 +120,24 @@ export class NeuralNetwork {
   }
 
   /**
-   * Mutate weights in-place.
-   * Each weight independently has `rate` probability of being nudged by ±1%.
-   * @param {number} rate  probability per weight (default 0.01 = every weight)
-   * @param {number} delta max fractional change (default 0.01 = 1%)
+   * Mutate weights in-place using additive Gaussian noise (Box-Muller).
+   * Each weight independently has `rate` probability of being perturbed.
+   * 5% of mutations use a large sigma (0.3) for exploration; the rest use `delta`.
+   * Weights are clamped to [-4, 4] and NaN/Infinity is replaced with a small random value.
+   * @param {number} rate  probability per weight (default 1.0 = every weight)
+   * @param {number} delta standard deviation for normal mutations (default 0.05)
    */
-  mutate(rate = 1.0, delta = 0.01) {
+  mutate(rate = 1.0, delta = 0.05) {
     const _mutateRow = (row) => {
       for (let i = 0; i < row.length; i++) {
         if (Math.random() < rate) {
-          row[i] += row[i] * (Math.random() * 2 - 1) * delta;
-          // Guard: if weight became NaN or Infinity, reset to small random value
+          const u = Math.random(), v = Math.random();
+          const gauss = Math.sqrt(-2 * Math.log(u + 1e-9)) * Math.cos(2 * Math.PI * v);
+          const sigma = Math.random() < 0.05 ? 0.3 : delta;
+          row[i] += gauss * sigma;
+          row[i] = Math.max(-4, Math.min(4, row[i]));
           if (!Number.isFinite(row[i])) {
-            row[i] = (Math.random() * 2 - 1) * 2;
+            row[i] = (Math.random() * 2 - 1) * 0.5;
           }
         }
       }
@@ -142,23 +147,20 @@ export class NeuralNetwork {
   }
 
   /**
-   * Uniform crossover with another network.
-   * Each weight is taken randomly from either this or `other` (50/50).
+   * Row-level crossover: each hidden/output neuron is taken whole from one parent.
+   * For each row j of child.w1, every weight in that row comes from either
+   * this.w1[j] or other.w1[j] (50/50). Same for w2.
    * Returns a new NeuralNetwork — neither parent is modified.
    * @param {NeuralNetwork} other
    * @returns {NeuralNetwork}
    */
   crossover(other) {
-    const child = new NeuralNetwork(
-      this.inputSize,
-      this.hiddenSize,
-      this.outputSize,
-    );
+    const child = new NeuralNetwork(this.inputSize, this.hiddenSize, this.outputSize);
     child.w1 = this.w1.map((row, j) =>
-      row.map((w, i) => (Math.random() < 0.5 ? w : other.w1[j][i])),
+      Math.random() < 0.5 ? [...row] : [...other.w1[j]]
     );
     child.w2 = this.w2.map((row, k) =>
-      row.map((w, j) => (Math.random() < 0.5 ? w : other.w2[k][j])),
+      Math.random() < 0.5 ? [...row] : [...other.w2[k]]
     );
     return child;
   }
