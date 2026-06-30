@@ -83,7 +83,7 @@ const ctrl = new GizmoController(scene, config, {
 // ── Simulation state ──────────────────────────────────────────────────────────
 let simulationStarted = false;
 let paused = true; // start paused until user clicks Start
-let followBest = true;
+let followBest = false;
 
 // ── Follow Best toggle ────────────────────────────────────────────────────────
 const _followBestBtn = document.getElementById("follow-best-btn");
@@ -246,8 +246,10 @@ const { openAquariumControls } = setupGui(gui, config, {
 });
 ctrl.initGizmoListPanel(openAquariumControls);
 
-// Open controls immediately on load
-openAquariumControls();
+// Open controls only on first visit (no persisted HoF yet)
+if (!(hallOfFame.herbivores.length > 0 || hallOfFame.carnivores.length > 0)) {
+  openAquariumControls();
+}
 
 // Auto-start if persisted HoF data exists from a previous session
 if (hallOfFame.herbivores.length > 0 || hallOfFame.carnivores.length > 0) {
