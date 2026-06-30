@@ -106,13 +106,25 @@ function startSimulation() {
   if (simulationStarted) return;
   simulationStarted = true;
   paused = false;
-  hallOfFame.clear();
-  hofStats.herb = 0;
-  hofStats.carn = 0;
-  hofStats.herbGeneration = 1;
-  hofStats.carnGeneration = 1;
+  hofStats.herb = hallOfFame.getBestScore("herbivores");
+  hofStats.carn = hallOfFame.getBestScore("carnivores");
   foodManager = new FoodManager(scene, config);
-  ctrl.createGizmos();
+
+  const hasHoF = hallOfFame.herbivores.length > 0 || hallOfFame.carnivores.length > 0;
+  if (hasHoF) {
+    const total = config.gizmoCount ?? 20;
+    const carnRatio = config.carnivoreRatio ?? 0.1;
+    const nCarns = Math.max(0, Math.round(total * carnRatio));
+    const nHerbs = Math.max(0, total - nCarns);
+    if (nHerbs > 0 && hallOfFame.herbivores.length > 0)
+      ctrl.spawnGeneration("herbivores", nHerbs, false);
+    else if (nHerbs > 0) ctrl.createGizmos();
+    if (nCarns > 0 && hallOfFame.carnivores.length > 0 && ctrl.gizmos.length < total)
+      ctrl.spawnGeneration("carnivores", Math.min(nCarns, total - ctrl.gizmos.length), true);
+  } else {
+    ctrl.createGizmos();
+  }
+
   updateHofPanel(hallOfFame);
   updateGenOverlay(hofStats);
   _updatePauseIndicator();
@@ -236,6 +248,11 @@ ctrl.initGizmoListPanel(openAquariumControls);
 
 // Open controls immediately on load
 openAquariumControls();
+
+// Auto-start if persisted HoF data exists from a previous session
+if (hallOfFame.herbivores.length > 0 || hallOfFame.carnivores.length > 0) {
+  startSimulation();
+}
 
 // ── Animation loop ────────────────────────────────────────────────────────────
 const clock = new THREE.Clock();

@@ -83,43 +83,14 @@ ${
   </div>`;
 }
 
-function _renderIdentityGroups({
-  historical,
-  latest,
-  current,
-  latestGeneration,
-  currentGeneration,
-}) {
-  return [
-    _groupHtml("🏆 Historical Top 3", historical),
-    _groupHtml("🧬 Latest Gen Top 3", latest, latestGeneration),
-    _groupHtml("⚡ Current Gen Top 3", current, currentGeneration),
-  ].join("");
-}
-
 /**
-
-* Re-render the panel with current HallOfFame data.
-* @param {import('../HallOfFame.js').HallOfFame} hallOfFame
-  */
+ * Re-render the panel with current HallOfFame data.
+ * @param {import('../HallOfFame.js').HallOfFame} hallOfFame
+ */
 export function updateHofPanel(hallOfFame) {
   if (!herbList || !carnList || !hallOfFame) return;
-
-  herbList.innerHTML = _renderIdentityGroups({
-    historical: hallOfFame.herbivoresBest ?? [],
-    latest: hallOfFame.herbivoresLatestGenerationBest ?? [],
-    current: hallOfFame.herbivoresCurrentGenerationBest ?? [],
-    latestGeneration: hallOfFame.herbivoresLatestGeneration,
-    currentGeneration: hallOfFame.herbivoresCurrentGeneration,
-  });
-
-  carnList.innerHTML = _renderIdentityGroups({
-    historical: hallOfFame.carnivoresBest ?? [],
-    latest: hallOfFame.carnivoresLatestGenerationBest ?? [],
-    current: hallOfFame.carnivoresCurrentGenerationBest ?? [],
-    latestGeneration: hallOfFame.carnivoresLatestGeneration,
-    currentGeneration: hallOfFame.carnivoresCurrentGeneration,
-  });
+  herbList.innerHTML = _groupHtml("🏆 Top Herbivores", hallOfFame.herbivores ?? []);
+  carnList.innerHTML = _groupHtml("🏆 Top Carnivores", hallOfFame.carnivores ?? []);
 }
 
 const genOverlay = document.getElementById("gen-overlay");
