@@ -48,9 +48,16 @@ export function initGizmoState(gizmo, scene, config, options) {
       ? IDENTITY_CARNIVORE
       : IDENTITY_HERBIVORE);
 
+  // Body hue is banded by identity so herbivores/carnivores are recognizable
+  // at a glance even before the spike shape/color registers: herbivores land
+  // in the warm yellow-green band, carnivores in the red-orange band.
+  const bandedHue =
+    gizmo.identity === IDENTITY_HERBIVORE
+      ? 0.2 + Math.random() * 0.22
+      : (0.97 + Math.random() * 0.1) % 1;
   gizmo.color = options.color
     ? options.color.clone()
-    : new THREE.Color().setHSL(Math.random(), 0.75, 0.58);
+    : new THREE.Color().setHSL(bandedHue, 0.75, 0.58);
   gizmo.lineageHue = options.lineageHue ?? gizmo.color.getHSL({}).h;
 
   gizmo.nn = options.nn ?? new NeuralNetwork(14, config.nnHiddenSize, 3);
@@ -60,6 +67,12 @@ export function initGizmoState(gizmo, scene, config, options) {
   gizmo.starvationCounter = 0;
   gizmo.wallTime = 0; // seconds of continuous wall contact
   gizmo.score = 0;
+  gizmo.eatCooldownRemaining = 0; // herbivores: seconds until the next bite is allowed
+
+  // ── Reproduction (per-life, in addition to end-of-generation HoF crossover) ──
+  gizmo.readyToReproduce = false;
+  gizmo.reproductionEnergy = 0; // successful eats since last reproduction
+  gizmo.reproductionCooldownRemaining = 0; // seconds until eligible again
 
   gizmo._nnFault = false;
   gizmo._nnFaultReason = "";

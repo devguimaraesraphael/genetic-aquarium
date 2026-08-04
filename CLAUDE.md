@@ -80,11 +80,17 @@ tests/
 | 12 | `wall` | proximidade de parede dentro do range de visão |
 | 13 | `bias` | sempre 1.0 |
 
+### Alimentação
+- Herbívoros comem comida; carnívoros comem herbívoros (nunca comida, nunca outro carnívoro) — checado por `identity` em `src/gizmo/eating.js`.
+- **Herbívoros têm cooldown de mordida** (`gizmo.eatCooldownRemaining`, decrementado em `Gizmo.update`): a cada comida consumida, come apenas **uma** unidade (não devora um cluster inteiro de uma vez) e entra em cooldown de `config.herbEatCooldown` (padrão 2.5s, slider em Food) antes de poder comer de novo. Carnívoros não têm esse cooldown — já limitados a uma presa por tentativa.
+
 ### Evolução / Hall of Fame
 - `TOP_N = 10` por slot (herbívoros / carnívoros).
 - `pickParents` usa seleção por torneio de tamanho 4.
-- **Único mecanismo de reprodução: crossover do HoF ao fim de cada geração.** Gizmos não se clonam durante a vida — não existe `reproductionEnergy` nem `readyToReproduce`.
 - `HallOfFame.register(gizmo)` chamado na morte; `finalizeGeneration` é no-op no modelo flat.
+- **Dois mecanismos de reprodução coexistem:**
+  1. Crossover do HoF ao fim de cada geração (`spawnGeneration`), quando um slot inteiro é extinto.
+  2. **Reprodução em vida por clonagem mutada**, disparada pela alimentação (`src/gizmo/lifecycle.js` `reproduce()`): a cada eat bem-sucedido, `gizmo.reproductionEnergy` incrementa; ao atingir `config.scoreToReproduce` (com `reproductionCooldownRemaining <= 0`), `readyToReproduce` vira `true`. `GizmoController`/`simulationTick` chama `gizmo.reproduce(config, populaçãoAtual)` a cada tick para os gizmos prontos, respeitando o cap `config.gizmoCount`. Ao reproduzir, o pai reseta `reproductionEnergy`/`readyToReproduce` e entra em cooldown de `config.reproductionCooldown` segundos antes de poder reproduzir de novo.
 
 ### Respawn
 - Sempre manter dois grupos: herbívoros e carnívoros.
@@ -92,10 +98,15 @@ tests/
 - Se ambos zerarem: respawnar ambos.
 
 ### Comportamento visual
-- Corpo: círculo (2D) · Herbívoro: spike amarelo `#ffff00` arredondado · Carnívoro: spike vermelho `#ff0000` fino/pontudo.
+- Corpo: círculo (2D) com contorno escuro sutil (`buildBodyOutline`) + par de olhos sempre visíveis (`buildEyesMesh`), do lado do spike (direção de deslocamento).
+- Herbívoro: corpo em tom quente amarelo-verde (hue banda `0.20–0.42`), spike = nadadeira única arredondada amarela `#ffff00`, olhos grandes e redondos (cute).
+- Carnívoro: corpo em tom vermelho-laranja (hue banda `~0.97–0.07`), spike = presa fina + 2 farpas laterais vermelhas `#ff0000` (`buildFangGroup`), olhos estreitos/em fenda (predador).
+- Geometria dos spikes vive em `src/gizmo/meshShapes.js`; cor de linhagem (corpo) é sorteada dentro da banda de hue da identidade em `gizmoInit.js`, não full-rainbow.
 - Círculo de visão: visível apenas com gizmo selecionado (linha sólida).
 - Círculo vermelho: aparece na entidade mais próxima visível quando gizmo selecionado.
 - Apenas entidades **dentro do vision range** contam como inputs NN ou alvo do círculo vermelho.
+- Aquário: cantos arredondados (`CORNER_RADIUS` em `builder.js`), paleta padrão "Cozy Lagoon" (fundo `#123647`, borda `#8a5a34`, linha `#ffcf8a`) — preset também disponível em `AQUARIUM_PRESETS`. "Plankton" são bolhas quentes com leve oscilação lateral. Comida é renderizada como pellets arredondados coloridos (`FOOD_PALETTE` em `foodRenderer.js`), não quadrados verdes sólidos.
+- Efeitos: `effects.predation()` dispara quando um carnívoro mata um herbívoro (em vez do `effects.death()` genérico); `effects.birth()` dispara quando um gizmo se reproduz.
 
 ### Seleção e câmera
 - Click no aquário e click na lista devem permanecer sincronizados.

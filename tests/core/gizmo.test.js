@@ -276,10 +276,10 @@ describe("3. Gizmo – Rendering in Three.js scene", () => {
     expect(firstChild?.material?.color?.getHex()).toBe(0xffff00);
   });
 
-  it("carnivore arrow color is orange-red (0xff4400)", () => {
+  it("carnivore fang color is red (0xff0000)", () => {
     const g = new Gizmo(scene, CONFIG, { identity: IDENTITY_CARNIVORE });
     const firstChild = g.spikeMesh.children[0];
-    expect(firstChild?.material?.color?.getHex()).toBe(0xff4400);
+    expect(firstChild?.material?.color?.getHex()).toBe(0xff0000);
   });
 
   it("dead gizmo has group.visible = false", () => {

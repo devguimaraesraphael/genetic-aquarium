@@ -1,0 +1,322 @@
+{
+  "package.json": {
+    "mtime": 1781704639.5035288,
+    "ast_hash": "1a0182a309bcbe5ccfa9ad7e6ace7dd0",
+    "semantic_hash": "1a0182a309bcbe5ccfa9ad7e6ace7dd0"
+  },
+  "src/Food.js": {
+    "mtime": 1781712084.8276732,
+    "ast_hash": "a68a1d96a94335b8a11bc3c27c63fe28",
+    "semantic_hash": "a68a1d96a94335b8a11bc3c27c63fe28"
+  },
+  "src/Gizmo.js": {
+    "mtime": 1782952108.5242028,
+    "ast_hash": "23ade6c191223f2ee3984b3973eafa02",
+    "semantic_hash": "23ade6c191223f2ee3984b3973eafa02"
+  },
+  "src/HallOfFame.js": {
+    "mtime": 1782810442.123502,
+    "ast_hash": "212938a124f71b326b91996c4834cd3d",
+    "semantic_hash": "212938a124f71b326b91996c4834cd3d"
+  },
+  "src/Identity.js": {
+    "mtime": 1781710042.8658364,
+    "ast_hash": "b66d4a1b43811bb69c30ba2655c9e2de",
+    "semantic_hash": "b66d4a1b43811bb69c30ba2655c9e2de"
+  },
+  "src/NeuralNetwork.js": {
+    "mtime": 1782810180.2648194,
+    "ast_hash": "d22d0479034230064f2619a5f6256138",
+    "semantic_hash": "d22d0479034230064f2619a5f6256138"
+  },
+  "src/aquarium/builder.js": {
+    "mtime": 1782947405.880208,
+    "ast_hash": "190bdcc04be7151be515ad81f5eea888",
+    "semantic_hash": "190bdcc04be7151be515ad81f5eea888"
+  },
+  "src/aquarium/gizmoController.js": {
+    "mtime": 1782810180.2650878,
+    "ast_hash": "f38a65e414db8267ec89745b7bac9393",
+    "semantic_hash": "f38a65e414db8267ec89745b7bac9393"
+  },
+  "src/aquarium/guiModal.js": {
+    "mtime": 1781712257.528386,
+    "ast_hash": "fc6c0091b7f6f399adf841076090fe5a",
+    "semantic_hash": "fc6c0091b7f6f399adf841076090fe5a"
+  },
+  "src/aquarium/guiSetup.js": {
+    "mtime": 1782952120.2892306,
+    "ast_hash": "d61e5850eeba7b778073ddea68749fdc",
+    "semantic_hash": "d61e5850eeba7b778073ddea68749fdc"
+  },
+  "src/aquarium/sceneSetup.js": {
+    "mtime": 1781714792.5679052,
+    "ast_hash": "2528fdc42aa134813eb6791206258833",
+    "semantic_hash": "2528fdc42aa134813eb6791206258833"
+  },
+  "src/aquarium/simulationTick.js": {
+    "mtime": 1782947476.5068429,
+    "ast_hash": "654e60cf7480830e6edd2ef2225f4cca",
+    "semantic_hash": "654e60cf7480830e6edd2ef2225f4cca"
+  },
+  "src/constants.js": {
+    "mtime": 1782952082.4171422,
+    "ast_hash": "bd806b7dceec6869b03f6b56f7447a06",
+    "semantic_hash": "bd806b7dceec6869b03f6b56f7447a06"
+  },
+  "src/debug.js": {
+    "mtime": 1781708368.1293688,
+    "ast_hash": "791c251016c113b44581b8cbdf6cefa1",
+    "semantic_hash": "791c251016c113b44581b8cbdf6cefa1"
+  },
+  "src/effects/EffectsManager.js": {
+    "mtime": 1781637222.1308775,
+    "ast_hash": "cdcd538d00192423df83e439982569a3",
+    "semantic_hash": "cdcd538d00192423df83e439982569a3"
+  },
+  "src/food/foodRenderer.js": {
+    "mtime": 1782947620.0630345,
+    "ast_hash": "6c4d019cce099f40a949e35212deeb88",
+    "semantic_hash": "6c4d019cce099f40a949e35212deeb88"
+  },
+  "src/gizmo/colors.js": {
+    "mtime": 1781711708.0504231,
+    "ast_hash": "9892d761268aa4b840b46ea96c294ac9",
+    "semantic_hash": "9892d761268aa4b840b46ea96c294ac9"
+  },
+  "src/gizmo/details.js": {
+    "mtime": 1782947948.7374082,
+    "ast_hash": "e5bab952923ad193a57985f847577cfd",
+    "semantic_hash": "e5bab952923ad193a57985f847577cfd"
+  },
+  "src/gizmo/eating.js": {
+    "mtime": 1782952074.3101234,
+    "ast_hash": "b1f99dbf7710fefaf3e9ecd45e895679",
+    "semantic_hash": "b1f99dbf7710fefaf3e9ecd45e895679"
+  },
+  "src/gizmo/gizmoId.js": {
+    "mtime": 1781795548.5873122,
+    "ast_hash": "d7bde4211bfc9ca563f0751153753876",
+    "semantic_hash": "d7bde4211bfc9ca563f0751153753876"
+  },
+  "src/gizmo/gizmoInit.js": {
+    "mtime": 1782952100.931185,
+    "ast_hash": "a839b175c7348eeac599155a5b5f7af1",
+    "semantic_hash": "a839b175c7348eeac599155a5b5f7af1"
+  },
+  "src/gizmo/inputs.js": {
+    "mtime": 1781795548.538312,
+    "ast_hash": "930e7f5303ec07e54bf50ba265f22fa4",
+    "semantic_hash": "930e7f5303ec07e54bf50ba265f22fa4"
+  },
+  "src/gizmo/lifecycle.js": {
+    "mtime": 1782946719.953031,
+    "ast_hash": "558a0bde53747d17df14ffe50a58b617",
+    "semantic_hash": "558a0bde53747d17df14ffe50a58b617"
+  },
+  "src/gizmo/mesh.js": {
+    "mtime": 1782947253.7557025,
+    "ast_hash": "7f6886ec1d59d41e2fae9113e22b8427",
+    "semantic_hash": "7f6886ec1d59d41e2fae9113e22b8427"
+  },
+  "src/gizmo/meshShapes.js": {
+    "mtime": 1782947235.051502,
+    "ast_hash": "b970fce352926ad96b15b0a6e8838da8",
+    "semantic_hash": "b970fce352926ad96b15b0a6e8838da8"
+  },
+  "src/gizmo/movement.js": {
+    "mtime": 1782947918.918208,
+    "ast_hash": "894adabc085115b4a786bb84577136bd",
+    "semantic_hash": "894adabc085115b4a786bb84577136bd"
+  },
+  "src/gizmo/nnInference.js": {
+    "mtime": 1781714452.3374417,
+    "ast_hash": "cc9a224a9ea2636c7b2e7e7ffd73d0ae",
+    "semantic_hash": "cc9a224a9ea2636c7b2e7e7ffd73d0ae"
+  },
+  "src/gizmo/selection.js": {
+    "mtime": 1781723061.4083908,
+    "ast_hash": "02d89bb00b7da4a08d7008139694a2d3",
+    "semantic_hash": "02d89bb00b7da4a08d7008139694a2d3"
+  },
+  "src/main.js": {
+    "mtime": 1782814070.8666794,
+    "ast_hash": "949a59c4b7bdaba41a814fc998a0fc45",
+    "semantic_hash": "949a59c4b7bdaba41a814fc998a0fc45"
+  },
+  "src/simulation/respawnRules.js": {
+    "mtime": 1781715561.8948498,
+    "ast_hash": "9a0af77f87641404720f9e01860406b3",
+    "semantic_hash": "9a0af77f87641404720f9e01860406b3"
+  },
+  "src/ui/cameraSelectionRules.js": {
+    "mtime": 1781704621.2798939,
+    "ast_hash": "69e144d35a97847805cd10b906d66bfc",
+    "semantic_hash": "69e144d35a97847805cd10b906d66bfc"
+  },
+  "src/ui/detailPanel.js": {
+    "mtime": 1781720003.9843671,
+    "ast_hash": "79357946a19e3a593c0eb04b14fcda3f",
+    "semantic_hash": "79357946a19e3a593c0eb04b14fcda3f"
+  },
+  "src/ui/detailPanelStyles.js": {
+    "mtime": 1781720003.88622,
+    "ast_hash": "f01f58382fd7d9f1fda085fa190bb806",
+    "semantic_hash": "f01f58382fd7d9f1fda085fa190bb806"
+  },
+  "src/ui/gizmoList.js": {
+    "mtime": 1781714831.6055622,
+    "ast_hash": "cf1c5c92fbe897a4e5b214f8fb86da1f",
+    "semantic_hash": "cf1c5c92fbe897a4e5b214f8fb86da1f"
+  },
+  "src/ui/hofPanel.js": {
+    "mtime": 1782812536.505843,
+    "ast_hash": "d81de536e8579a4a9e917de9e745e023",
+    "semantic_hash": "d81de536e8579a4a9e917de9e745e023"
+  },
+  "src/ui/nnCanvas.js": {
+    "mtime": 1781712190.3752499,
+    "ast_hash": "da9fb27e943f1e07da890de2e3409b58",
+    "semantic_hash": "da9fb27e943f1e07da890de2e3409b58"
+  },
+  "src/ui/nnColors.js": {
+    "mtime": 1781712125.172918,
+    "ast_hash": "051f6b1ec9349bab77780aac830d9bb9",
+    "semantic_hash": "051f6b1ec9349bab77780aac830d9bb9"
+  },
+  "src/ui/nnDrawer.js": {
+    "mtime": 1781795548.5408235,
+    "ast_hash": "bdf1a784ab44d99b93a4e911086491bd",
+    "semantic_hash": "bdf1a784ab44d99b93a4e911086491bd"
+  },
+  "src/ui/settingsModal.js": {
+    "mtime": 1781710990.5586863,
+    "ast_hash": "eb990047ce97eb8c7531709338dddb63",
+    "semantic_hash": "eb990047ce97eb8c7531709338dddb63"
+  },
+  "src/ui/settingsModal.styles.js": {
+    "mtime": 1781710820.6971934,
+    "ast_hash": "344361255f742c55ef51596dbdec5959",
+    "semantic_hash": "344361255f742c55ef51596dbdec5959"
+  },
+  "start.sh": {
+    "mtime": 1781617828.3206213,
+    "ast_hash": "cb1c035c17ad3c214558e2effa9ebbf7",
+    "semantic_hash": "cb1c035c17ad3c214558e2effa9ebbf7"
+  },
+  "tests/core/configRules.test.js": {
+    "mtime": 1781705559.402729,
+    "ast_hash": "7b982c63c94688e510d7a8f95b092e2c",
+    "semantic_hash": "7b982c63c94688e510d7a8f95b092e2c"
+  },
+  "tests/core/eatingAndReproduction.test.js": {
+    "mtime": 1782952166.7553415,
+    "ast_hash": "5a701585bdcac8c2ad1d7d186f765342",
+    "semantic_hash": "5a701585bdcac8c2ad1d7d186f765342"
+  },
+  "tests/core/gizmo.test.js": {
+    "mtime": 1782947304.6512296,
+    "ast_hash": "8d358a6feb795085ad8ee91e49af3803",
+    "semantic_hash": "8d358a6feb795085ad8ee91e49af3803"
+  },
+  "tests/core/gizmoId.test.js": {
+    "mtime": 1781795548.5924199,
+    "ast_hash": "ea556ca4b33f620ddbefb7fce446346d",
+    "semantic_hash": "ea556ca4b33f620ddbefb7fce446346d"
+  },
+  "tests/core/gizmoLiveRenderingTests.test.js": {
+    "mtime": 1781723061.4638479,
+    "ast_hash": "9433bca6f67d6625f4884f2788f87b3c",
+    "semantic_hash": "9433bca6f67d6625f4884f2788f87b3c"
+  },
+  "tests/core/gizmoNNOutputValidation.test.js": {
+    "mtime": 1781795548.5416112,
+    "ast_hash": "27229dcabbc1ae301b288ea769a66f3e",
+    "semantic_hash": "27229dcabbc1ae301b288ea769a66f3e"
+  },
+  "tests/core/gizmoNNProcessTests.test.js": {
+    "mtime": 1781795548.5416112,
+    "ast_hash": "29fdbc344752c151aae9e00a236d2875",
+    "semantic_hash": "29fdbc344752c151aae9e00a236d2875"
+  },
+  "tests/core/gizmoNnFaultTolerance.test.js": {
+    "mtime": 1781707600.376746,
+    "ast_hash": "43fe3ef70e1f581b8990386fc6d641f0",
+    "semantic_hash": "43fe3ef70e1f581b8990386fc6d641f0"
+  },
+  "tests/core/gizmoSelectionVision.test.js": {
+    "mtime": 1781723061.5595584,
+    "ast_hash": "de1f39e0f37e95774fcf5bc9dd26848f",
+    "semantic_hash": "de1f39e0f37e95774fcf5bc9dd26848f"
+  },
+  "tests/core/gizmoVisualIdentity.test.js": {
+    "mtime": 1782948010.304814,
+    "ast_hash": "8d5080e91c72ed039cd5e7c225f0a887",
+    "semantic_hash": "8d5080e91c72ed039cd5e7c225f0a887"
+  },
+  "tests/core/hallOfFame.test.js": {
+    "mtime": 1782810180.2657094,
+    "ast_hash": "92a3707105bc432b5991ef2e3596bb22",
+    "semantic_hash": "92a3707105bc432b5991ef2e3596bb22"
+  },
+  "tests/core/identity.test.js": {
+    "mtime": 1781705206.6253958,
+    "ast_hash": "b6534afd94dac17bd0db9ca8511f9338",
+    "semantic_hash": "b6534afd94dac17bd0db9ca8511f9338"
+  },
+  "tests/core/neuralNetwork.robust.test.js": {
+    "mtime": 1782810180.2657094,
+    "ast_hash": "2c3d5bc2df69c2d708f8be95859c89c3",
+    "semantic_hash": "2c3d5bc2df69c2d708f8be95859c89c3"
+  },
+  "tests/core/neuralNetwork.test.js": {
+    "mtime": 1781705206.6874218,
+    "ast_hash": "909d8003c9d6a082d7471e87b4f04603",
+    "semantic_hash": "909d8003c9d6a082d7471e87b4f04603"
+  },
+  "tests/simulation/respawnRules.test.js": {
+    "mtime": 1781715715.7986002,
+    "ast_hash": "b271fafdb6b8052ffcfe7e4a62593dc9",
+    "semantic_hash": "b271fafdb6b8052ffcfe7e4a62593dc9"
+  },
+  "tests/ui/cameraSelectionRules.test.js": {
+    "mtime": 1781705343.744781,
+    "ast_hash": "9ea3c7877947e76838df51730a5fd103",
+    "semantic_hash": "9ea3c7877947e76838df51730a5fd103"
+  },
+  "tests/ui/detailPanel.test.js": {
+    "mtime": 1781717530.7853296,
+    "ast_hash": "656d503b1e40d3ee08eb814e575b8a8a",
+    "semantic_hash": "656d503b1e40d3ee08eb814e575b8a8a"
+  },
+  "tests/ui/gizmoList.test.js": {
+    "mtime": 1781705459.5552728,
+    "ast_hash": "195337215d1c67eecb0a748f7e3c701c",
+    "semantic_hash": "195337215d1c67eecb0a748f7e3c701c"
+  },
+  "vite.config.js": {
+    "mtime": 1781617782.6263814,
+    "ast_hash": "3bc15a59fab94c5693271060921d3d04",
+    "semantic_hash": "3bc15a59fab94c5693271060921d3d04"
+  },
+  ".claude/project-rules.md": {
+    "mtime": 1782810180.284761,
+    "ast_hash": "e769a5c90ceb27784e35364aa418aebf",
+    "semantic_hash": "e769a5c90ceb27784e35364aa418aebf"
+  },
+  "CLAUDE.md": {
+    "mtime": 1782952194.89841,
+    "ast_hash": "9c16710dabe75416aa44a89d83e43edd",
+    "semantic_hash": "9c16710dabe75416aa44a89d83e43edd"
+  },
+  "fish.md": {
+    "mtime": 1781638035.9172337,
+    "ast_hash": "e35ca4f8d130e53635f5fc2f929a70e8",
+    "semantic_hash": "e35ca4f8d130e53635f5fc2f929a70e8"
+  },
+  "index.html": {
+    "mtime": 1781795548.533312,
+    "ast_hash": "d1b94f74d4983bcfd5dcec91b5511b10",
+    "semantic_hash": "d1b94f74d4983bcfd5dcec91b5511b10"
+  }
+}

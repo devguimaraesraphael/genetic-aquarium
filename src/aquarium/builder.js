@@ -6,6 +6,21 @@
 import * as THREE from "three";
 
 const BORDER = 8;
+const CORNER_RADIUS = 36; // rounded tank corners for a softer, cozy silhouette
+
+/** Traces a rounded-rectangle path (centered) into the given Shape/Path. */
+function roundedRectPath(target, halfW, halfH, r) {
+  target.moveTo(-halfW + r, -halfH);
+  target.lineTo(halfW - r, -halfH);
+  target.quadraticCurveTo(halfW, -halfH, halfW, -halfH + r);
+  target.lineTo(halfW, halfH - r);
+  target.quadraticCurveTo(halfW, halfH, halfW - r, halfH);
+  target.lineTo(-halfW + r, halfH);
+  target.quadraticCurveTo(-halfW, halfH, -halfW, halfH - r);
+  target.lineTo(-halfW, -halfH + r);
+  target.quadraticCurveTo(-halfW, -halfH, -halfW + r, -halfH);
+  target.closePath();
+}
 
 // ── Color helpers ─────────────────────────────────────────────────────────────
 
@@ -83,33 +98,27 @@ export function buildAquarium(scene, config, aqObjects) {
   scene.add(water);
   aqObjects.push(water);
 
+  const r = Math.min(CORNER_RADIUS, hw * 0.3, hh * 0.3);
+
   const outer = new THREE.Shape();
-  outer.moveTo(-(hw + BORDER), -(hh + BORDER));
-  outer.lineTo(hw + BORDER, -(hh + BORDER));
-  outer.lineTo(hw + BORDER, hh + BORDER);
-  outer.lineTo(-(hw + BORDER), hh + BORDER);
-  outer.closePath();
+  roundedRectPath(outer, hw + BORDER, hh + BORDER, r + BORDER);
   const hole = new THREE.Path();
-  hole.moveTo(-hw, -hh);
-  hole.lineTo(hw, -hh);
-  hole.lineTo(hw, hh);
-  hole.lineTo(-hw, hh);
-  hole.closePath();
+  roundedRectPath(hole, hw, hh, r);
   outer.holes.push(hole);
 
   const frame = new THREE.Mesh(
     new THREE.ShapeGeometry(outer),
     new THREE.MeshBasicMaterial({ color: aquariumBorder }),
   );
+  frame.position.z = 0.03; // above the water plane, avoids z-fighting in rounded corners
   scene.add(frame);
   aqObjects.push(frame);
 
-  const innerPts = [
-    new THREE.Vector3(-hw, -hh, 0.06),
-    new THREE.Vector3(hw, -hh, 0.06),
-    new THREE.Vector3(hw, hh, 0.06),
-    new THREE.Vector3(-hw, hh, 0.06),
-  ];
+  const linePath = new THREE.Path();
+  roundedRectPath(linePath, hw, hh, r);
+  const innerPts = linePath
+    .getPoints(8)
+    .map((p) => new THREE.Vector3(p.x, p.y, 0.06));
   const line = new THREE.LineLoop(
     new THREE.BufferGeometry().setFromPoints(innerPts),
     new THREE.LineBasicMaterial({ color: aquariumLine }),
@@ -125,12 +134,16 @@ const PLANKTON_COUNT = 120;
 export function setupPlankton(scene) {
   const pos = new Float32Array(PLANKTON_COUNT * 3);
   const vel = new Float32Array(PLANKTON_COUNT);
+  const baseX = new Float32Array(PLANKTON_COUNT);
+  const phase = new Float32Array(PLANKTON_COUNT);
 
   for (let i = 0; i < PLANKTON_COUNT; i++) {
-    pos[i * 3] = (Math.random() * 2 - 1) * (window.innerWidth / 2);
+    baseX[i] = (Math.random() * 2 - 1) * (window.innerWidth / 2);
+    pos[i * 3] = baseX[i];
     pos[i * 3 + 1] = (Math.random() * 2 - 1) * (window.innerHeight / 2);
     pos[i * 3 + 2] = 0.02;
     vel[i] = 5 + Math.random() * 10;
+    phase[i] = Math.random() * Math.PI * 2;
   }
 
   const geo = new THREE.BufferGeometry();
@@ -138,30 +151,35 @@ export function setupPlankton(scene) {
   attr.setUsage(THREE.DynamicDrawUsage);
   geo.setAttribute("position", attr);
 
+  // Warm cream bubbles rather than cold teal plankton streaks – cozier.
   const mesh = new THREE.Points(
     geo,
     new THREE.PointsMaterial({
-      color: 0x44ffcc,
-      size: 1.5,
+      color: 0xfff2d0,
+      size: 2.2,
       transparent: true,
-      opacity: 0.35,
+      opacity: 0.4,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     }),
   );
   scene.add(mesh);
 
-  return { pos, vel, attr, mesh };
+  return { pos, vel, baseX, phase, time: 0, attr, mesh };
 }
 
 export function updatePlankton(plankton, config, dt) {
-  const { pos, vel, attr } = plankton;
+  const { pos, vel, baseX, phase, attr } = plankton;
+  plankton.time = (plankton.time ?? 0) + dt;
   const hh = config.aquariumHeight / 2;
+  const hw = config.aquariumWidth / 2;
   for (let i = 0; i < PLANKTON_COUNT; i++) {
     pos[i * 3 + 1] += vel[i] * dt;
+    // Gentle horizontal sway – bubbles wobble instead of rising in a straight line.
+    pos[i * 3] = baseX[i] + Math.sin(plankton.time * 0.6 + phase[i]) * 6;
     if (pos[i * 3 + 1] > hh) {
       pos[i * 3 + 1] = -hh;
-      pos[i * 3] = (Math.random() * 2 - 1) * (config.aquariumWidth / 2);
+      baseX[i] = (Math.random() * 2 - 1) * hw;
     }
   }
   attr.needsUpdate = true;

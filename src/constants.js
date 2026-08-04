@@ -23,16 +23,16 @@ export const CONFIG = {
   aquariumWidth: 1200,
   aquariumHeight: 700,
 
-  // ── Aquarium colors ───────────────────────────────────────────────────────
-  aquariumBg: "#091d35",
-  aquariumBorder: "#1a5e6e",
-  aquariumLine: "#4af1f2",
+  // ── Aquarium colors – warm "Cozy Lagoon" default ──────────────────────────
+  aquariumBg: "#123647",
+  aquariumBorder: "#8a5a34",
+  aquariumLine: "#ffcf8a",
 
-  // ── Lights – subtler opacity and smaller spread ───────────────────────────
+  // ── Lights – warm sunbeam + coral glow + gentle teal accent ───────────────
   lights: [
-    { label: "Top-Left", color: "#00dcc8", scaleX: 280, scaleY: 220 },
-    { label: "Top-Right", color: "#50a0ff", scaleX: 260, scaleY: 200 },
-    { label: "Bottom-Center", color: "#14b482", scaleX: 320, scaleY: 190 },
+    { label: "Top-Left", color: "#ffb37b", scaleX: 280, scaleY: 220 },
+    { label: "Top-Right", color: "#ff8a65", scaleX: 260, scaleY: 200 },
+    { label: "Bottom-Center", color: "#2bb3a3", scaleX: 320, scaleY: 190 },
   ],
 
   // ── Food ──────────────────────────────────────────────────────────────────
@@ -43,6 +43,8 @@ export const CONFIG = {
   foodGrowthRate: 1.5, // px / second
   foodSpawnRadius: 40, // max px radius for child placement
   foodSpawnCooldown: 8, // seconds a food waits at max size before spawning again
+  herbEatCooldown: 2.5, // seconds a herbivore waits after a bite before eating again
+
   // ── Population ────────────────────────────────────────────────────────────
   gizmoCount: 20, // number of gizmos created on start/restart
   carnivoreRatio: 0.1, // fraction of initial gizmos that are carnivores
@@ -66,6 +68,17 @@ export const CONFIG = {
 
 // ── Aquarium presets ──────────────────────────────────────────────────────────
 export const AQUARIUM_PRESETS = [
+  {
+    name: "Cozy Lagoon",
+    bg: "#123647",
+    border: "#8a5a34",
+    line: "#ffcf8a",
+    lights: [
+      { color: "#ffb37b", scaleX: 280, scaleY: 220 },
+      { color: "#ff8a65", scaleX: 260, scaleY: 200 },
+      { color: "#2bb3a3", scaleX: 320, scaleY: 190 },
+    ],
+  },
   {
     name: "Ocean Deep",
     bg: "#091d35",

@@ -142,6 +142,9 @@ export function setupGui(gui, config, deps) {
   foodFolder
     .add(config, "foodSpawnCooldown", 1, 60, 1)
     .name("Spawn cooldown (s)");
+  foodFolder
+    .add(config, "herbEatCooldown", 0.5, 10, 0.5)
+    .name("Herbivore bite cooldown (s)");
   foodFolder.add({ "Reset Food": () => foodManager.reset() }, "Reset Food");
   foodFolder.close();
 

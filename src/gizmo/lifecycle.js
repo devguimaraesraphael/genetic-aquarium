@@ -49,6 +49,7 @@ export function reproduce(parent, config, currentPopulation = 0) {
 
   parent.reproductionEnergy = 0;
   parent.readyToReproduce = false;
+  parent.reproductionCooldownRemaining = config.reproductionCooldown ?? 15;
 
   // ── Debug: log clone birth ───────────────────────────────────────────────
   const hP = "#" + parent.color.getHexString();

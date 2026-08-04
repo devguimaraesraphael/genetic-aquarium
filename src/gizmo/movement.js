@@ -6,8 +6,6 @@
  * rather than using closures over class internals.
  */
 
-import * as THREE from "three";
-
 // bodyRadius is now stored on the gizmo instance; this constant is no longer used for eat detection
 
 /**
@@ -112,26 +110,6 @@ export function advancePosition(gizmo, config, dt) {
     }
   } else {
     gizmo.wallTime = 0;
-  }
-}
-
-/**
- * Attempt to eat nearby food items.
- * Mutates gizmo.starvationCounter, gizmo.score.
- * Marks eaten food with size=0 for removal by FoodManager.update().
- */
-export function tryEat(gizmo, foodManager) {
-  if (!foodManager || !foodManager.foods) return;
-
-  const eatRadius = (gizmo.bodyRadius ?? 6) * 1.5; // use stored bodyRadius
-  for (const food of foodManager.foods) {
-    if (food.size < 0.01) continue;
-    const dist = gizmo.position.distanceTo(new THREE.Vector2(food.x, food.y));
-    if (dist < eatRadius) {
-      gizmo.starvationCounter = 0;
-      gizmo.score += 10;
-      food.size = 0;
-    }
   }
 }
 

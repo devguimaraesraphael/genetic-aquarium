@@ -38,7 +38,11 @@ export function simulationTick(dt, ctx) {
   const dead = gizmos.filter((g) => g.isDead);
   if (dead.length > 0) {
     dead.forEach((g) => {
-      effects.death(g.position.x, g.position.y);
+      if (g._killedByPredation) {
+        effects.predation(g.position.x, g.position.y);
+      } else {
+        effects.death(g.position.x, g.position.y);
+      }
       const isNew = hallOfFame.register(g);
       if (isNew) {
         const slot =
@@ -52,6 +56,22 @@ export function simulationTick(dt, ctx) {
       gizmoList.removeGizmo(g.id);
     });
     ctrl.gizmos = gizmos.filter((g) => !g.isDead);
+    ctrl.updateGizmoList();
+  }
+
+  // Reproduction – gizmos that ate enough since their last reproduction and
+  // are past their cooldown clone themselves (mutated), capped at gizmoCount.
+  const offspring = [];
+  ctrl.gizmos.forEach((g) => {
+    if (g.isDead || !g.readyToReproduce) return;
+    const child = g.reproduce(config, ctrl.gizmos.length + offspring.length);
+    if (child) offspring.push(child);
+  });
+  if (offspring.length > 0) {
+    offspring.forEach((child) =>
+      effects.birth(child.position.x, child.position.y, child.bodyRadius),
+    );
+    ctrl.gizmos.push(...offspring);
     ctrl.updateGizmoList();
   }
 

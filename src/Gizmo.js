@@ -1,8 +1,10 @@
 import * as THREE from "three";
-import { IDENTITY } from "./Identity.js";
+import { getGizmoDetails } from "./gizmo/details.js";
 import { NeuralNetwork } from "./NeuralNetwork.js";
 import {
   buildBodyMesh,
+  buildBodyOutline,
+  buildEyesMesh,
   buildSpikeMesh,
   buildVisionMesh,
   buildSeenTargetMarker,
@@ -13,14 +15,12 @@ import { inferNN } from "./gizmo/nnInference.js";
 import {
   applyPhysics,
   advancePosition,
-  tryEat,
   updateSeenTargetMarker,
 } from "./gizmo/movement.js";
+import { tryEat } from "./gizmo/eating.js";
 import { reproduce as _reproduceGizmo } from "./gizmo/lifecycle.js";
 import { initGizmoState } from "./gizmo/gizmoInit.js";
 import { selectGizmo, deselectGizmo } from "./gizmo/selection.js";
-
-const IDENTITY_HERBIVORE = "herbivore";
 
 /**
  * Gizmo: neural-network-driven agent in the genetic aquarium.
@@ -45,10 +45,14 @@ export class Gizmo {
   _buildMesh() {
     // Body uses the gizmo's unique lineage color
     this.bodyMesh = buildBodyMesh(this.identity, this.genes.size, this.color);
+    this.bodyOutline = buildBodyOutline(this.genes.size);
+    this.eyesMesh = buildEyesMesh(this.identity, this.genes.size);
     this.spikeMesh = buildSpikeMesh(this.identity, this.genes.size);
     this.bodyGroup = new THREE.Group();
     this.bodyGroup.add(this.bodyMesh);
+    this.bodyGroup.add(this.bodyOutline);
     this.bodyGroup.add(this.spikeMesh);
+    this.bodyGroup.add(this.eyesMesh);
     this.group.add(this.bodyGroup);
     this.group.position.set(this.position.x, this.position.y, 0);
     // Arrow points along local +Y; atan2 aligns local +X with velocity.
@@ -123,6 +127,16 @@ export class Gizmo {
       return;
     }
 
+    if (this.reproductionCooldownRemaining > 0) {
+      this.reproductionCooldownRemaining = Math.max(
+        0,
+        this.reproductionCooldownRemaining - dt,
+      );
+    }
+    if (this.eatCooldownRemaining > 0) {
+      this.eatCooldownRemaining = Math.max(0, this.eatCooldownRemaining - dt);
+    }
+
     this._lastInputs = this._buildInputs(config, allGizmos, foodManager);
     const out = this._inferNN(this._lastInputs, config);
     const accelX = (out[0] * 2 - 1) * config.nnAccelScale;
@@ -136,7 +150,7 @@ export class Gizmo {
     this.group.rotation.z =
       Math.atan2(this.direction.y, this.direction.x) - Math.PI / 2;
 
-    if (eat) tryEat(this, foodManager, allGizmos);
+    if (eat) tryEat(this, config, foodManager, allGizmos);
     if (this._isSelected) updateSeenTargetMarker(this, allGizmos, foodManager);
   }
 
@@ -166,28 +180,7 @@ export class Gizmo {
   // ── Serialization ───────────────────────────────────────────────────────────
 
   getDetails() {
-    const starvLimit = this._config?.gizmoStarvation ?? 120;
-    const wallLimit = this._config?.gizmoMaxWallTime ?? 30;
-    return {
-      id: this.id,
-      type: this.identity === IDENTITY_HERBIVORE ? "herbivore" : "carnivore",
-      colorHex: "#" + this.color.getHexString(),
-      size: this.genes.size.toFixed(2),
-      vision: Math.round(
-        this.genes.visionRange?.[1] ?? this.genes.visionRange?.[0] ?? 0,
-      ),
-      score: this.score.toFixed(0),
-      age: this.age.toFixed(1),
-      speed: this.velocity.length().toFixed(1),
-      timeSinceEat: this.starvationCounter.toFixed(1),
-      starvationPct: this.starvationCounter / starvLimit,
-      wallTime: (this.wallTime ?? 0).toFixed(1),
-      wallTimePct: Math.min(1, (this.wallTime ?? 0) / wallLimit),
-      nnOut: `[${this._lastOutputs.map((x) => x.toFixed(3)).join(", ")}]`,
-      nnFault: this._nnFault,
-      nnFaultReason: this._nnFaultReason,
-      nnFaultStack: this._nnFaultStack,
-    };
+    return getGizmoDetails(this);
   }
 
   destroy() {
